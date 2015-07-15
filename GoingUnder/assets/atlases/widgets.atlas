@@ -1,0 +1,68 @@
+
+widgets.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: y
+ach
+  rotate: false
+  xy: 2, 2
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+highscore
+  rotate: false
+  xy: 396, 396
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+intro
+  rotate: false
+  xy: 2, 104
+  size: 160, 160
+  orig: 160, 160
+  offset: 0, 0
+  index: -1
+play
+  rotate: false
+  xy: 2, 266
+  size: 230, 230
+  orig: 230, 230
+  offset: 0, 0
+  index: -1
+playagain
+  rotate: false
+  xy: 234, 336
+  size: 160, 160
+  orig: 160, 160
+  offset: 0, 0
+  index: -1
+rate
+  rotate: false
+  xy: 104, 2
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+share
+  rotate: false
+  xy: 164, 104
+  size: 160, 160
+  orig: 160, 160
+  offset: 0, 0
+  index: -1
+soundoff
+  rotate: false
+  xy: 206, 2
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+soundon
+  rotate: false
+  xy: 396, 294
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1

@@ -1,0 +1,13 @@
+GoingUnderBase/hs_err*.log
+GoingUnderBase/libs/*.jar
+GoingUnder/bin
+GoingUnder/gen
+GoingUnder/hs_err*.log
+GoingUnder/libs/*.jar
+GoingUnder-desktop/hs_err*.log
+GoingUnder-desktop/bin
+GoingUnder-desktop/libs/*.jar
+GoingUnder-html/gwt-unitCache
+GoingUnder-html/war
+GoingUnder-html/libs/*.jar
+.metadata
