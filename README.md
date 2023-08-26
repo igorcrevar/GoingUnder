@@ -8,14 +8,8 @@ I'm (relatively) ok if someone use something from here for his/her own game (wel
 HAPPY if you tell/notify me about that. At least put a comment on google play link or drop me an email (crewce at gmail dot com) or something,
 
 #### How to Build
-... import in eclipse and build like any other libgdx project
-- add libs jars in appropriate folders (read readme.txt in every libs folder)
-For Desktop project you may need to fix assets linked source like this:
-- delete folder assets in GoingUnder-desktop project.
-- Build Path -> Link source -> Choose assets folder of GoingUnder project
-- import google-play-services_lib into eclipse project
-
-Probably very similar for android studio
+- Open project with Android Studio
+  Read more details on: https://libgdx.com/wiki/start/setup
 
 #### Google Play Desc
 
