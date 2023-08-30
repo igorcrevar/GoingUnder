@@ -78,10 +78,10 @@ public class GameData {
 	}
 	
 	public static GameData createDefault(GameManager gameManager) {
-		GameData playerData = new GameData();		
-		playerData.CameraDist = 2.8f;		
+		GameData playerData = new GameData();
+		playerData.CameraDist = 2.8f;
 		playerData.CameraHalfHeight = CameraHalfHeightValue;
-		playerData.CameraHalfWidth = CameraHalfWidthValue;		
+		playerData.CameraHalfWidth = CameraHalfWidthValue;
 		playerData.levels = GameDataLevelFactory.createLevels(gameManager);
 
 		return playerData;
@@ -91,6 +91,7 @@ public class GameData {
 		GameData playerData = new GameData();
 		playerData.Friction = 3.5f;
 		playerData.VelocityX = 2.4f;
+		playerData.VelocityY = -2.4f;
 		playerData.CameraDist = 0.4f;
 		playerData.CameraHalfHeight = CameraHalfHeightValue;
 		playerData.CameraHalfWidth = CameraHalfWidthValue;

@@ -10,6 +10,7 @@ import com.igorcrevar.goingunder.GameManager;
 import com.igorcrevar.goingunder.IActivityRequestHandler;
 import com.igorcrevar.goingunder.ISceneManager;
 import com.igorcrevar.goingunder.objects.IGameObject;
+import com.igorcrevar.goingunder.objects.ParticleEffect;
 import com.igorcrevar.goingunder.objects.IntroSceneButtons;
 import com.igorcrevar.goingunder.objects.Player;
 import com.igorcrevar.goingunder.utils.BitmapFontDrawer;
@@ -34,11 +35,13 @@ public class IntroScene implements IScene {
 	private final IActivityRequestHandler activityRequestHandler;
 	
 	private Player player;
-	private int playerPos;	
+	private int playerDir;	
 	private String scoreInfo;
 	private float animationTimer;
 	private final Random rnd = new Random();
 	private int hintType;
+
+	private ParticleEffect particles;
 	
 	public IntroScene(IActivityRequestHandler activityRequestHandler) {
 		this.activityRequestHandler = activityRequestHandler;
@@ -46,9 +49,11 @@ public class IntroScene implements IScene {
 	
 	@Override
 	public void create(ISceneManager sceneManager) {
-		gameManager = sceneManager.getGameManager();		
-		
+		gameManager = sceneManager.getGameManager();
+
+		player = gameManager.getPlayer();
 		background = gameManager.getBackground();
+		particles = new ParticleEffect(gameManager, player, gameData);
 				
 		// my font
 		myFontDrawerBatch.addNew("Going", 
@@ -61,19 +66,18 @@ public class IntroScene implements IScene {
 				gameManager.getTextureAtlas("game").findRegion("titlebubble"), 10, 95, 9, 9, 4, 0.00001f);
 		
 		introButtons = new IntroSceneButtons(sceneManager, activityRequestHandler, gameManager);
-		
-		player = gameManager.getPlayer();
 	}
 	
 	@Override
 	public void init(ISceneManager sceneManager) {
 		activityRequestHandler.showAds(false);
-		background.init(gameData);			
+		background.init(gameData);
 		gameManager.playIntroMusic();
-		
 		player.init(gameData);
+		particles.init(gameData);
+		gameData.CameraYPosition = 0.0f;
 		animationTimer = 0.0f;
-		playerPos = 0;
+		playerDir = 0;
 		scoreInfo = Integer.toString(gameManager.getTopScore());
 		hintType = rnd.nextInt(3);
 	}
@@ -84,28 +88,28 @@ public class IntroScene implements IScene {
 
 		background.update(deltaTime);
 		player.update(deltaTime);
-		if (animationTimer >= 0.5f && playerPos == 0) {
-			playerPos = 1;
-			player.addVelocity(2.2f);
-		}
-		else if (animationTimer >= 2.0f && playerPos == 1) {
-			playerPos = 2;
-			player.addVelocity(-2.2f);
+		particles.update(deltaTime);
+		gameData.CameraYPosition += deltaTime * gameData.VelocityY; // update camera pos also
+
+		// 0.0 left 1.5 right 3.0 left 4.5 right (left = -1, right = 1)
+		int newPlayerDir = ((int)(animationTimer / 1.5f) % 2) * 2 - 1;
+		if (playerDir != newPlayerDir) {
+			playerDir = newPlayerDir;
+			player.addVelocity(2.2f * newPlayerDir);
+			particles.addNew();
 		}
 		
 		animationTimer += deltaTime;
 		if (animationTimer >= MaximumAnimTimerValue) {
-			playerPos = 0;
 			animationTimer = 0.0f;
 			hintType = rnd.nextInt(3);
 		}
 		
-		gameData.setProjectionMatrix(spriteBatch.getProjectionMatrix());		
+		gameData.setProjectionMatrix(spriteBatch.getProjectionMatrix());
 		spriteBatch.begin();
-		// draw background
-		background.draw(spriteBatch);
-		// draw player
-		player.draw(spriteBatch);
+		background.draw(spriteBatch); // draw background
+		particles.draw(spriteBatch); // draw particles
+		player.draw(spriteBatch); // draw player
 		spriteBatch.end();
 		
 		myFontDrawerBatch.draw();
@@ -142,9 +146,9 @@ public class IntroScene implements IScene {
 		// draw top score above player
 		float posX = ((player.getX() + gameData.CameraHalfWidth) / gameData.CameraHalfWidth)
 				/ 2.0f * bfDrawer.getWidth();
-		float posY = ((gameData.PlayerSizeY * 1.05f +  player.getY() + gameData.CameraHalfHeight)
+		float playerY = player.getY() - gameData.CameraYPosition;
+		float posY = ((gameData.PlayerSizeY * 1.05f + playerY + gameData.CameraHalfHeight)
 				/ gameData.CameraHalfHeight) / 2.0f * bfDrawer.getHeight();
-
 
 		bfDrawer.begin()
 				.setColor(Color.ORANGE)

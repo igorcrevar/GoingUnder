@@ -96,7 +96,6 @@ public class GameScene implements IScene {
 		gameData.init(myRandom);
 		player.init(gameData);
 		background.init(gameData);
-		
 		particles.init(gameData);
 		
 		additionalTimer = 0.0f;
@@ -156,7 +155,6 @@ public class GameScene implements IScene {
 	private void update(float deltaTime) {
 		background.update(deltaTime);
 		player.update(deltaTime);
-		
 		particles.update(deltaTime);
 		
 		ArrayList<ObstacleObject> obstacles = obstaclePool.getAllVisibles();
@@ -328,11 +326,7 @@ public class GameScene implements IScene {
 
 	@Override
 	public boolean processBackKey(ISceneManager sceneManager) {
-		if (!sceneManager.getGameManager().isGameNotActive()) {
-			sceneManager.setScene(SceneConstants.IntroScene);
-		} else {
-			sceneManager.startGame(); // restart
-		}
+		sceneManager.setScene(SceneConstants.IntroScene);
 
 		return true;
 	}

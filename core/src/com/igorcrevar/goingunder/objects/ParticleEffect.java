@@ -7,6 +7,7 @@ import com.igorcrevar.goingunder.GameData;
 import com.igorcrevar.goingunder.GameManager;
 
 public class ParticleEffect implements IGameObject {
+	private final float RandomProbability = 0.03f;
 	private final int MaxParticles = 60;
 	private Particle[] particles;
 	private int countAlive;
@@ -94,9 +95,10 @@ public class ParticleEffect implements IGameObject {
 			}
 
 			// randomly fire bubble anywhere on screen
-			if (Math.random() < 0.03f) {
+			if (Math.random() < RandomProbability) {
 				float x = 2 * gameData.CameraHalfWidth * (float) Math.random() - gameData.CameraHalfWidth;
-				float y = 2 * gameData.CameraHalfHeight * (float) Math.random() - gameData.CameraHalfHeight;
+				float y = 2 * gameData.CameraHalfHeight * (float) Math.random() - gameData.CameraHalfHeight
+					+ gameData.CameraYPosition;
 				addNew(x, y);
 			}
 		}

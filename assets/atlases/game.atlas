@@ -12,9 +12,9 @@ arrow
   index: -1
 background
   rotate: false
-  xy: 495, 254
-  size: 13, 254
-  orig: 13, 254
+  xy: 498, 1
+  size: 13, 508
+  orig: 13, 508
   offset: 0, 0
   index: -1
 bubble
@@ -29,13 +29,6 @@ dummy
   xy: 2, 254
   size: 2, 2
   orig: 2, 2
-  offset: 0, 0
-  index: -1
-obstacle2
-  rotate: false
-  xy: 2, 2
-  size: 139, 49
-  orig: 139, 49
   offset: 0, 0
   index: -1
 obstacle3
@@ -54,7 +47,7 @@ obstacle4
   index: -1
 obstacle5
   rotate: false
-  xy: 378, 203
+  xy: 2, 2
   size: 120, 49
   orig: 120, 49
   offset: 0, 0
