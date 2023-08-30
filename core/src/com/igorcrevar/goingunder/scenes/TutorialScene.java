@@ -15,6 +15,8 @@ import com.igorcrevar.goingunder.utils.GameHelper;
 import com.igorcrevar.goingunder.utils.Mathf;
 
 public class TutorialScene implements IScene {
+	private static final float ButtonTimerPause = 0.5f;
+
 	private GameData gameData;
 	private GameManager gameManager;
 	private SpriteBatch spriteBatch;
@@ -30,7 +32,6 @@ public class TutorialScene implements IScene {
 	private int state;
 	private float buttonAlpha;
 	private float buttonTimer;
-	private float arrowTimer;
 	private float pauseTimer;
 	private float countingDownTimer;
 	
@@ -42,6 +43,7 @@ public class TutorialScene implements IScene {
 	public void create(ISceneManager sceneManager) {
 		this.gameManager = sceneManager.getGameManager();
 		gameData = GameData.createForIntro();
+		gameData.VelocityY = 0f;
 		gameData.CameraDist = 2.8f;
 		spriteBatch = new SpriteBatch();
 		
@@ -62,7 +64,6 @@ public class TutorialScene implements IScene {
 		background.init(gameData);
 		state = 0;
 		buttonTimer = 0f;
-		arrowTimer = 0f;
 		pauseTimer = 0.0f;
 		countingDownTimer = 0f;
 	}
@@ -108,7 +109,8 @@ public class TutorialScene implements IScene {
 	@Override
 	public void processTouchDown(ISceneManager sceneManager, int x, int y) {
 		// on last state or when pause is not over taps do not count
-		if (state == 6 || pauseTimer != 0f) {
+		// ...also skip touch if its colddown time
+		if (state == 6 || pauseTimer != 0f || buttonTimer < ButtonTimerPause) {
 			return;
 		}
 		
@@ -116,17 +118,17 @@ public class TutorialScene implements IScene {
 		if (isLeft()) {
 			if (okYPos && x < Gdx.graphics.getWidth() / 2) {
 				player.addVelocity(gameData.VelocityX);
+				gameManager.playMoveSound();
 				pauseTimer = 0.001f; // request pause
 				buttonTimer = 0f;
-				arrowTimer = 0f;
 				state += 1;
 			}	
 		}
 		else if (okYPos && x > Gdx.graphics.getWidth() / 2) {
 			player.addVelocity(-gameData.VelocityX);
+			gameManager.playMoveSound();
 			pauseTimer = 0.001f; // request pause
 			buttonTimer = 0f;
-			arrowTimer = 0f;
 			state += 1;
 		}
 	}
@@ -142,26 +144,25 @@ public class TutorialScene implements IScene {
 		float x, y;
 		boolean isLeft = isLeft();
 		// update arrow
+		float arrowTimer = buttonTimer / 2f;
 		x = isLeft ? -gameData.CameraHalfWidth / 2.0f - arrow.getWidth() / 2.0f : gameData.CameraHalfWidth / 2.0f - arrow.getWidth() / 2.0f; 
-		y = Mathf.lerpBI(-gameData.CameraHalfHeight / 2f + 2.2f, -gameData.CameraHalfHeight / 2f + 0.4f, arrowTimer / 2.0f);
+		y = Mathf.lerpBI(
+			-gameData.CameraHalfHeight / 2f + 1.2f,
+			-gameData.CameraHalfHeight / 2f + 0.4f, 
+			arrowTimer - (float)Math.floor(arrowTimer));
 		arrow.setPosition(x, y);
 		// update button
 		x = isLeft ? -gameData.CameraHalfWidth : 0f;
 		y = -gameData.CameraHalfHeight;
 		button.setPosition(x, y);
-		buttonAlpha = Mathf.lerpBI(0.6f, 0.1f, buttonTimer);
+		buttonAlpha = Mathf.lerpBI(
+			0.6f,
+			0.1f,
+			buttonTimer - (float)Math.floor(buttonTimer));
 		// update player
 		player.update(deltaTime);
 		
 		buttonTimer += deltaTime;
-		if (buttonTimer >= 1f) {
-			buttonTimer = 0.0f;
-		}
-		
-		arrowTimer += deltaTime;		
-		if (arrowTimer >= 2.0f) {
-			arrowTimer = 0.0f;
-		}
 	}
 	
 	private void drawDefault() {
@@ -170,19 +171,27 @@ public class TutorialScene implements IScene {
 		gameData.setProjectionMatrix(spriteBatch.getProjectionMatrix());		
 		spriteBatch.begin();
 		background.draw(spriteBatch);
-		arrow.draw(spriteBatch);
-		button.draw(spriteBatch, buttonAlpha);
+		if (buttonTimer >= ButtonTimerPause) {
+			arrow.draw(spriteBatch);
+			button.draw(spriteBatch, buttonAlpha);
+		}
 		player.draw(spriteBatch);
 		spriteBatch.end();
 
 		// draw additional text. Is this necessary?
 		BitmapFontDrawer bfDrawer = gameManager.getBitmapFontDrawer();
-		String txt = "Tap!";
+		String txt1 = isLeft() 
+			? "Tap left screen side"
+			: "Tap right screen side";
+		String txt2 = isLeft() 
+			? "to give a rightward impulse"
+			: "to give a leftward impulse";
 		float xpos = bfDrawer.getWidth() * (isLeft() ? 0.25f : 0.75f);
 		bfDrawer.begin()
 				.setScale(1.0f)
-				.setColor(Color.WHITE)
-				.draw(txt, xpos, bfDrawer.getHeight() * 0.3f, BitmapFontDrawer.Flag.Middle)
+				.setColor(Color.ORANGE)
+				.draw(txt1, 0f, 200f, BitmapFontDrawer.Flag.Center, BitmapFontDrawer.Flag.Center)
+				.draw(txt2, 0f, 100f, BitmapFontDrawer.Flag.Center, BitmapFontDrawer.Flag.Center)
 				.end();
 	}
 	

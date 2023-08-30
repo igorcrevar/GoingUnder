@@ -6,6 +6,7 @@ import com.igorcrevar.goingunder.GameData;
 import com.igorcrevar.goingunder.GameManager;
 
 public class StaticBackground implements IGameObject {
+	private static final float SpeedFactor = 0.5f;
 	private final Sprite sprite;
 	private GameData gameData;
 
@@ -28,11 +29,12 @@ public class StaticBackground implements IGameObject {
 	@Override
 	public void update(float deltaTime) {
 		// must always move, because camera is moving
-		yPos -= gameData.VelocityY * deltaTime;
+		float newPosY = gameData.getCameraBottom() - gameData.CameraHalfHeight * 2f;
+		yPos -= gameData.VelocityY * deltaTime * SpeedFactor;
 		if (yPos >= gameData.CameraHalfHeight * 2) {
-			this.sprite.setY(this.sprite.getY() - gameData.CameraHalfHeight * 2);
 			yPos = 0.0f;
 		}
+		this.sprite.setY(newPosY + yPos);
 	}
 
 	@Override

@@ -91,11 +91,12 @@ public class IntroScene implements IScene {
 		particles.update(deltaTime);
 		gameData.CameraYPosition += deltaTime * gameData.VelocityY; // update camera pos also
 
-		// 0.0 left 1.5 right 3.0 left 4.5 right (left = -1, right = 1)
-		int newPlayerDir = ((int)(animationTimer / 1.5f) % 2) * 2 - 1;
+		// 0.0 left 1.5 right 3.0 right 4.5 left
+		int newPlayerDir = (int)(animationTimer / 1.5f) + 1; // [1,2,3,4]
 		if (playerDir != newPlayerDir) {
 			playerDir = newPlayerDir;
-			player.addVelocity(2.2f * newPlayerDir);
+			int tmpDir = (playerDir % 4) / 2; // [1, 2, 3, 4] -> [0, 1, 1, 0]
+			player.addVelocity(2.2f * (tmpDir * 2 - 1));
 			particles.addNew();
 		}
 		

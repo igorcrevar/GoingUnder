@@ -19,6 +19,7 @@ public class GameManager {
 	public enum Status {
 		Resuming, Paused, Active, NotActive
 	}
+	private final static float MusicVolume = 0.7f;
 	private final static int BitmapFontDrawerFakeXResolution = 1080;
 	private final static String GameSaves = "game_saves";
 	private final static String TopScore = "top_score";
@@ -33,6 +34,7 @@ public class GameManager {
 	private int totalScoreSum;
 	private int totalGamesPlayed;
 	private Status gameStatus;
+	private int moveSound;
 
 	private BitmapFontDrawer bitmapFontDrawer;
 	
@@ -56,6 +58,7 @@ public class GameManager {
 		assetManager.load("atlases/widgets.atlas", TextureAtlas.class);
 		assetManager.load("sounds/coin.wav", Sound.class);
 		assetManager.load("sounds/move.wav", Sound.class);
+		assetManager.load("sounds/move2.wav", Sound.class);
 		assetManager.load("sounds/die.wav", Sound.class);
 		assetManager.load("sounds/intro.ogg", Music.class);
 	}
@@ -176,6 +179,7 @@ public class GameManager {
 	public void playIntroMusic() {
 		if (isSoundOn) {
 			Music music = assetManager.get("sounds/intro.ogg", Music.class);
+			music.setVolume(MusicVolume);
 			music.setLooping(true);
 			music.play();
 		}
@@ -194,7 +198,15 @@ public class GameManager {
 	
 	public void playMoveSound() {
 		if (isSoundOn) {
-			getSound("move.wav").play();
+			moveSound = (moveSound + 1) & 1;
+			switch (moveSound) {
+			case 0:
+				getSound("move.wav").play();
+				break;
+			case 1:
+				getSound("move2.wav").play();
+				break;
+			}
 		}
 	}
 	

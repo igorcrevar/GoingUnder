@@ -10,6 +10,7 @@ public class GameDataLevelFactory {
 	private static class GameLevel0 extends GameLevel1 {
 		public GameLevel0(GameManager gameManager) {
 			super(gameManager);
+			velocityY = -2.0f;
 			friction = 3.5f;
 			emptySpaceSizeInTheMiddle = 1.52f;
 			emptySpaceSizeOnTheEnd = 1.48f;
