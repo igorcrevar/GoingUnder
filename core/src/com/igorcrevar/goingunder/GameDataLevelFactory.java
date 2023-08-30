@@ -1,33 +1,45 @@
 package com.igorcrevar.goingunder;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.igorcrevar.goingunder.statemachine.GeneratorStateMachine;
 import com.igorcrevar.goingunder.statemachine.IGeneratorStateMachine;
 
 public class GameDataLevelFactory {
 	
 	private static class GameLevel0 extends GameLevel1 {
-		public GameLevel0() {
-			super();
+		public GameLevel0(GameManager gameManager) {
+			super(gameManager);
 			friction = 3.5f;
-			emptySpaceSizeInTheMiddle = 1.35f;
-			emptySpaceSizeOnTheEnd = 1.31f;
+			emptySpaceSizeInTheMiddle = 1.52f;
+			emptySpaceSizeOnTheEnd = 1.48f;
 			endOnScore = 4;
+		}
+
+		@Override
+		protected AtlasRegion[] getTextures(GameManager gameManager) {
+			return new AtlasRegion[] {
+				gameManager.getTextureAtlas("game").findRegion("ob10_left"),
+				gameManager.getTextureAtlas("game").findRegion("ob10_middle"),
+				gameManager.getTextureAtlas("game").findRegion("ob10_right"),
+			};
 		}
 	}
 	
 	private static class GameLevel1 extends AGameLevel {
-		public GameLevel1() {
+		protected final AtlasRegion[] textures;
+		
+		public GameLevel1(GameManager gameManager) {
 			friction = 3.5f;
 			velocityX = 1.8f;
 			velocityY = -2.4f;
 			obstacleGeneratorDistance = 5.359f;
 			
-			emptySpaceSizeInTheMiddle = 1.22f;
-			emptySpaceSizeOnTheEnd = 1.16f;
+			emptySpaceSizeInTheMiddle = 1.34f;
+			emptySpaceSizeOnTheEnd = 1.28f;
 			boundariesBouncingFactor = 0.5f;
-			endOnScore = 30;
+			endOnScore = 15;
+			textures = getTextures(gameManager);
 		}
 
 		@Override
@@ -36,18 +48,51 @@ public class GameDataLevelFactory {
 		}
 
 		@Override
-		public void resolveObstacleTexture(Sprite part, GameManager gameManager) {
-			TextureAtlas atlas = gameManager.getTextureAtlas("game");
-			if (part.getWidth() > 2.0f) {
-				part.setRegion(atlas.findRegion("obstacle1"));
-			} else {
-				part.setRegion(atlas.findRegion("obstacle1_small"));
-			}	
+		public AtlasRegion[] getTextures() {
+			return textures;
+		}
+
+		@Override
+		public float getEndPartSize() {
+			return 0.075f;
+		}
+
+		@Override
+		public float getPartSize() {
+			return 0.3f;
+		}
+
+		protected AtlasRegion[] getTextures(GameManager gameManager) {
+			return new AtlasRegion[] {
+				gameManager.getTextureAtlas("game").findRegion("ob1_left"),
+				gameManager.getTextureAtlas("game").findRegion("ob1_middle"),
+				gameManager.getTextureAtlas("game").findRegion("ob1_right"),
+			};
+		}
+	}
+
+	private static class GameLevel11 extends GameLevel1 {
+		public GameLevel11(GameManager gameManager) {
+			super(gameManager);
+			emptySpaceSizeInTheMiddle = 1.22f;
+			emptySpaceSizeOnTheEnd = 1.16f;
+			endOnScore = 30;
+		}
+
+		@Override
+		protected AtlasRegion[] getTextures(GameManager gameManager) {
+			return new AtlasRegion[] {
+				gameManager.getTextureAtlas("game").findRegion("ob11_left"),
+				gameManager.getTextureAtlas("game").findRegion("ob11_middle"),
+				gameManager.getTextureAtlas("game").findRegion("ob11_right"),
+			};
 		}
 	}
 	
 	private static class GameLevel2 extends AGameLevel {
-		public GameLevel2() {
+		private final AtlasRegion[] textures;
+		
+		public GameLevel2(GameManager gameManager) {
 			friction = 3.5f;
 			velocityX = 1.8f;
 			velocityY = -2.5f;
@@ -56,7 +101,12 @@ public class GameDataLevelFactory {
 			emptySpaceSizeInTheMiddle = 1.22f;
 			emptySpaceSizeOnTheEnd = 1.16f;
 			boundariesBouncingFactor = 0.5f;
-			endOnScore = 60;			
+			endOnScore = 60;
+			textures = new AtlasRegion[] {
+				gameManager.getTextureAtlas("game").findRegion("ob2_left"),
+				gameManager.getTextureAtlas("game").findRegion("ob2_middle"),
+				gameManager.getTextureAtlas("game").findRegion("ob2_right"),
+			};
 		}
 
 		@Override
@@ -65,13 +115,25 @@ public class GameDataLevelFactory {
 		}
 
 		@Override
-		public void resolveObstacleTexture(Sprite part, GameManager gameManager) {
-			part.setRegion(gameManager.getTextureAtlas("game").findRegion("obstacle2"));
+		public AtlasRegion[] getTextures() {
+			return textures;
+		}
+
+		@Override
+		public float getEndPartSize() {
+			return 0.1f;
+		}
+
+		@Override
+		public float getPartSize() {
+			return 0.6f;
 		}
 	}
 	
 	private static class GameLevel3 extends AGameLevel {
-		public GameLevel3() {
+		private final AtlasRegion[] textures;
+
+		public GameLevel3(GameManager gameManager) {
 			friction = 3.5f;
 			velocityX = 1.8f;
 			velocityY = -2.55f;
@@ -80,7 +142,10 @@ public class GameDataLevelFactory {
 			emptySpaceSizeInTheMiddle = 1.22f;
 			emptySpaceSizeOnTheEnd = 1.16f;
 			boundariesBouncingFactor = 0.5f;
-			endOnScore = 90;			
+			endOnScore = 90;
+			textures = new AtlasRegion[] {
+				gameManager.getTextureAtlas("game").findRegion("obstacle3"),
+			};
 		}
 
 		@Override
@@ -89,13 +154,25 @@ public class GameDataLevelFactory {
 		}
 
 		@Override
-		public void resolveObstacleTexture(Sprite part, GameManager gameManager) {
-			part.setRegion(gameManager.getTextureAtlas("game").findRegion("obstacle3"));
+		public AtlasRegion[] getTextures() {
+			return textures;
+		}
+
+		@Override
+		public float getEndPartSize() {
+			return 0.1f;
+		}
+
+		@Override
+		public float getPartSize() {
+			return 0.5f;
 		}
 	}
 	
 	private static class GameLevel4 extends AGameLevel {
-		public GameLevel4() {
+		private final AtlasRegion[] textures;
+
+		public GameLevel4(GameManager gameManager) {
 			friction = 3.5f;
 			velocityX = 1.8f;
 			velocityY = -2.6f;
@@ -104,7 +181,10 @@ public class GameDataLevelFactory {
 			emptySpaceSizeInTheMiddle = 1.21f;
 			emptySpaceSizeOnTheEnd = 1.15f;
 			boundariesBouncingFactor = 0.4f;
-			endOnScore = 120;			
+			endOnScore = 120;
+			textures = new AtlasRegion[] {
+				gameManager.getTextureAtlas("game").findRegion("obstacle4"),
+			};
 		}
 
 		@Override
@@ -113,13 +193,25 @@ public class GameDataLevelFactory {
 		}
 
 		@Override
-		public void resolveObstacleTexture(Sprite part, GameManager gameManager) {
-			part.setRegion(gameManager.getTextureAtlas("game").findRegion("obstacle4"));
+		public AtlasRegion[] getTextures() {
+			return textures;
+		}
+
+		@Override
+		public float getEndPartSize() {
+			return 0.1f;
+		}
+
+		@Override
+		public float getPartSize() {
+			return 0.5f;
 		}
 	}
 	
 	private static class GameLevel5 extends AGameLevel {
-		public GameLevel5() {
+		private final AtlasRegion[] textures;
+
+		public GameLevel5(GameManager gameManager) {
 			friction = 3.5f;
 			velocityX = 1.8f;
 			velocityY = -2.7f;
@@ -128,7 +220,10 @@ public class GameDataLevelFactory {
 			emptySpaceSizeInTheMiddle = 1.20f;
 			emptySpaceSizeOnTheEnd = 1.14f;
 			boundariesBouncingFactor = 0.4f;
-			endOnScore = 0;			
+			endOnScore = 0;
+			textures = new AtlasRegion[] {
+				gameManager.getTextureAtlas("game").findRegion("obstacle5"),
+			};
 		}
 
 		@Override
@@ -137,14 +232,30 @@ public class GameDataLevelFactory {
 		}
 
 		@Override
-		public void resolveObstacleTexture(Sprite part, GameManager gameManager) {
-			part.setRegion(gameManager.getTextureAtlas("game").findRegion("obstacle5"));
+		public AtlasRegion[] getTextures() {
+			return textures;
+		}
+
+		@Override
+		public float getEndPartSize() {
+			return 0.1f;
+		}
+
+		@Override
+		public float getPartSize() {
+			return 0.5f;
 		}
 	}
 	
-	public static AGameLevel[] createLevels() {
+	public static AGameLevel[] createLevels(GameManager gameManager) {
 		return new AGameLevel[] {
-			new GameLevel0(), new GameLevel1(), new GameLevel2(), new GameLevel3(), new GameLevel4(), new GameLevel5()
+			new GameLevel0(gameManager),
+			new GameLevel1(gameManager),
+			new GameLevel11(gameManager),
+			new GameLevel2(gameManager),
+			new GameLevel3(gameManager),
+			new GameLevel4(gameManager),
+			new GameLevel5(gameManager)
 		}; 
 	}	
 }

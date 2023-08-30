@@ -77,13 +77,13 @@ public class GameData {
 		CameraHalfHeightValue = AspectRatio * CameraHalfWidthValue;
 	}
 	
-	public static GameData createDefault() {
+	public static GameData createDefault(GameManager gameManager) {
 		GameData playerData = new GameData();		
 		playerData.CameraDist = 2.8f;		
 		playerData.CameraHalfHeight = CameraHalfHeightValue;
-		playerData.CameraHalfWidth = CameraHalfWidthValue;
-		
-		playerData.levels = GameDataLevelFactory.createLevels();
+		playerData.CameraHalfWidth = CameraHalfWidthValue;		
+		playerData.levels = GameDataLevelFactory.createLevels(gameManager);
+
 		return playerData;
 	}
 	
@@ -118,7 +118,7 @@ public class GameData {
 		return score < 4 ? 2.5f : 3.0f;
 	}
 
-	public void resolveObstacleTexture(Sprite sprite, GameManager gameManager) {
-		currentGameLevel.resolveObstacleTexture(sprite, gameManager);
+	public AGameLevel getLevel() {
+		return currentGameLevel;
 	}
 }

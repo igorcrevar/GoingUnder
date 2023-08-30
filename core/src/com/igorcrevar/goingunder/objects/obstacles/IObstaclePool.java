@@ -7,7 +7,7 @@ import com.igorcrevar.goingunder.GameManager;
 import com.igorcrevar.goingunder.ObstacleTypeEnum;
 
 public interface IObstaclePool {
-	void init(GameData gameData);
+	void init();
 	ObstacleObject getOne(ObstacleTypeEnum type, GameData gameData, GameManager gameManager);
 	ArrayList<ObstacleObject> getAllVisibles();
 	void removeFromVisibles(ObstacleObject obj);

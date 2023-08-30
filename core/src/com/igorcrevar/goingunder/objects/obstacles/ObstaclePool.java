@@ -11,17 +11,17 @@ public class ObstaclePool implements IObstaclePool {
 	private ObstacleObject[] obstacles;
 	private ArrayList<ObstacleObject> visible;
 	
-	public ObstaclePool(GameData gameData) {
-		visible = new ArrayList<ObstacleObject>(gameData.MaxOnScreenAtOnce);
+	public ObstaclePool(int maxOnScreenAtOnce) {
+		visible = new ArrayList<ObstacleObject>(maxOnScreenAtOnce);
 		// create obstacle pool
-		obstacles = new ObstacleObject[gameData.MaxOnScreenAtOnce];
-		for (short j = 0; j < gameData.MaxOnScreenAtOnce; ++j) {
-			obstacles[j] = new ObstacleObject(this);
+		obstacles = new ObstacleObject[maxOnScreenAtOnce];
+		for (short j = 0; j < maxOnScreenAtOnce; ++j) {
+			obstacles[j] = new ObstacleObject();
 		}
 	}
 	
 	@Override
-	public void init(GameData gameData) {
+	public void init() {
 		// disable all obstacles
 		for (short j = 0; j < obstacles.length; ++j) {
 			obstacles[j].setIsEnabled(false);
@@ -53,6 +53,7 @@ public class ObstaclePool implements IObstaclePool {
 
 	@Override
 	public void removeFromVisibles(ObstacleObject obj) {
+		obj.setIsEnabled(false);
 		visible.remove(obj);
 	}
 }

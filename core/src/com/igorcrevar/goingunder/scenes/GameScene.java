@@ -30,7 +30,7 @@ import com.igorcrevar.goingunder.utils.MyFontDrawerDefaultFont;
 
 public class GameScene implements IScene {
 	private Player player;
-	private GameData gameData = GameData.createDefault();
+	private GameData gameData;
 	private IGameObject background;
 	
 	private ParticleEffect particles;
@@ -65,13 +65,14 @@ public class GameScene implements IScene {
 	public GameScene(IMyRandom myRandom, IActivityRequestHandler activityRequestHandler) {
 		this.myRandom = myRandom;
 		this.activityRequestHandler = activityRequestHandler;
-		this.obstaclePool = new ObstaclePool(gameData);
 		this.halfScreen = Gdx.graphics.getWidth() / 2;
 	}
 	
 	@Override
 	public void create(ISceneManager sceneManager) {
 		this.gameManager = sceneManager.getGameManager();
+		this.gameData = GameData.createDefault(this.gameManager);
+		this.obstaclePool = new ObstaclePool(this.gameData.MaxOnScreenAtOnce);
 		
 		player = gameManager.getPlayer();
 		background = gameManager.getBackground();
@@ -91,10 +92,10 @@ public class GameScene implements IScene {
 	public void init(ISceneManager sceneManager) {
 		activityRequestHandler.showAds(false);
 		
+		obstaclePool.init();
 		gameData.init(myRandom);
 		player.init(gameData);
 		background.init(gameData);
-		obstaclePool.init(gameData);
 		
 		particles.init(gameData);
 		
@@ -172,7 +173,8 @@ public class GameScene implements IScene {
 			
 			// obstacle is not on the screen anymore, mark it as free to use
 			if (bottom > gameData.getCameraTop()) {
-				oo.setIsEnabled(false);
+				// remove from visible obstacles pool
+				obstaclePool.removeFromVisibles(oo);
 			}
 		}
 		

@@ -3,6 +3,7 @@ package com.igorcrevar.goingunder.objects.obstacles;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.igorcrevar.goingunder.GameData;
 import com.igorcrevar.goingunder.GameManager;
 import com.igorcrevar.goingunder.ObstacleTypeEnum;
@@ -11,179 +12,198 @@ import com.igorcrevar.goingunder.ObstacleTypeEnum;
 // 0.845 , 1.69 , 2.2995 ,  3.5 , 3.745 , 4.66
 public class ObstacleObject {
 	private static final int MaxParts = 3;
-	private static final float DefaultYPos = 20000.0f;
+	private static final int MaxSprites = 20;
+	
+	private enum PartType {
+		Left, Right, Both
+	}
 	
 	private ObstacleTypeEnum obstacleType;
-	private Sprite[] partsObject;
-	
 	private boolean doesPlayerPassObstacle;
 	private boolean isEnabled;
 	
-	private IObstaclePool obstaclePool;
 	private int partsCount;
+	private int spritesCount;
 	
-	private float[] tmp = new float[MaxParts];
+	private final float[] widths = new float[MaxParts];
+	private final PartType[] types = new PartType[MaxParts];
+	private final Sprite[] sprites = new Sprite[MaxSprites];
+	private final Rectangle[] collisionRects = new Rectangle[MaxParts];
 	
-	public ObstacleObject(IObstaclePool obstaclePool) {
-		this.obstaclePool = obstaclePool;
-		this.obstacleType = ObstacleTypeEnum.LeftHole;
-		
-		this.partsObject = new Sprite[MaxParts];
-		for (int i = 0; i < MaxParts; ++i) {
-			this.partsObject[i] = new Sprite();
-			this.partsObject[i].setPosition(0.0f, DefaultYPos);
+	public ObstacleObject() {
+		for (int i = 0; i < this.collisionRects.length; ++i) {
+			this.collisionRects[i] = new Rectangle();
+		}
+		for (int i = 0; i < this.sprites.length; ++i) {
+			this.sprites[i] = new Sprite();
 		}
 		
-		partsCount = 1;
 		this.setIsEnabled(false);
 	}
 	
-	private void initOnePart(float posY, float cameraHalfWidth, float sizeY,
-			float emptySpaceSizeInTheMiddle, float emptySpaceSizeOnTheEnd) {
-		float availableWidth = 0.0f;
-		float posX = 0.0f;
-		
-		switch (this.obstacleType) {
-		// case RightHole:
-		default:
-			availableWidth = cameraHalfWidth * 2 - emptySpaceSizeOnTheEnd;
-			posX = availableWidth / 2 - cameraHalfWidth;
+	private void initParts(float posY, float cameraHalfWidth,
+			float sizeY, float emptySpaceSizeInTheMiddle, 
+			float emptySpaceSizeOnTheEnd, AtlasRegion[] textures,
+			float endPartSize, float normalPartSize) {
+		this.partsCount = 2; // most of obstacles has two parts
+		float availableWidth = cameraHalfWidth * 2f;
+		float size = 0.0f;
+		float posX = -cameraHalfWidth;
+
+		switch (obstacleType) {
+		case RightHole:
+			this.partsCount = 1;
+			types[0] = PartType.Right;
+			widths[0] = availableWidth - emptySpaceSizeOnTheEnd;
 			break;
 		case LeftHole:
-			availableWidth = cameraHalfWidth * 2 - emptySpaceSizeOnTheEnd;
-			posX = availableWidth / 2 - cameraHalfWidth + emptySpaceSizeOnTheEnd;
+			this.partsCount = 1;
+			types[0] = PartType.Left;
+			widths[0] = availableWidth - emptySpaceSizeOnTheEnd;
+			posX += emptySpaceSizeOnTheEnd;
 			break;
 		case LeftRightHoles:
-			availableWidth = (cameraHalfWidth - emptySpaceSizeOnTheEnd) * 2;
-			posX = availableWidth / 2 - cameraHalfWidth + emptySpaceSizeOnTheEnd;
-			break;			
-		}
-		
-		Sprite part = partsObject[0];
-		part.setSize(availableWidth, sizeY);
-		part.setPosition(posX - availableWidth / 2.0f, posY);
-	}
-	
-	private void initMoreThanOnePart(float posY, float cameraHalfWidth,
-			float sizeY, float emptySpaceSizeInTheMiddle, float emptySpaceSizeOnTheEnd) {
-		float availableWidth = cameraHalfWidth * 2;
-		float[] width = tmp;
-		int widths = 0;
-		float size = 0.0f;
-		
-		switch (obstacleType) {
-		//case LeftMiddleHole:
-		default:
+			this.partsCount = 1;
+			types[0] = PartType.Both;
+			widths[0] = (cameraHalfWidth - emptySpaceSizeOnTheEnd) * 2;
+			posX += emptySpaceSizeOnTheEnd;
+			break;
+
+		// more than one parts
+		case LeftMiddleHole:
 			size = (availableWidth / 2 - emptySpaceSizeInTheMiddle) / 2;
-			width[0] = size;
-			width[1] = availableWidth - emptySpaceSizeInTheMiddle - size;
-			widths = 2;
+			types[0] = PartType.Right;
+			types[1] = PartType.Left;
+			widths[0] = size;
+			widths[1] = availableWidth - emptySpaceSizeInTheMiddle - size;
 			break;
 		case RightMiddleHole:
 			size = (availableWidth / 2 - emptySpaceSizeInTheMiddle) / 2;
-			width[0] = availableWidth - emptySpaceSizeInTheMiddle - size;
-			width[1] = size;
-			widths = 2;
+			types[0] = PartType.Right;
+			types[1] = PartType.Left;
+			widths[0] = availableWidth - emptySpaceSizeInTheMiddle - size;
+			widths[1] = size;
 			break;
 		case MiddleHole:
 			size = (availableWidth - emptySpaceSizeInTheMiddle) / 2;
-			width[0] = size;
-			width[1] = size;
-			widths = 2;
+			types[0] = PartType.Right;
+			types[1] = PartType.Left;
+			widths[0] = size;
+			widths[1] = size;
 			break;
 		case LeftRightMiddleHoles:
+			this.partsCount = 3;
 			size = (availableWidth / 2 - emptySpaceSizeInTheMiddle) / 2;
-			width[0] = size;
-			width[1] = availableWidth - 2 * emptySpaceSizeInTheMiddle - 2 * size;
-			width[2] = size;
-			widths = 3;
+			types[0] = PartType.Right;
+			types[1] = PartType.Both;
+			types[2] = PartType.Left;
+			widths[0] = size;
+			widths[1] = availableWidth - 2 * emptySpaceSizeInTheMiddle - 2 * size;
+			widths[2] = size;
 			break;
 			
 		case Left4Hole:
 			size = (availableWidth / 2 - emptySpaceSizeInTheMiddle) / 4;
-			width[0] = size;
-			width[1] = availableWidth - size - emptySpaceSizeInTheMiddle;
-			widths = 2;
+			types[0] = PartType.Right;
+			types[1] = PartType.Left;
+			widths[0] = size;
+			widths[1] = availableWidth - size - emptySpaceSizeInTheMiddle;
 			break;
 		case Left4MiddleHole:
 			size = (availableWidth / 2 - emptySpaceSizeInTheMiddle) * 0.75f;
-			width[0] = size;
-			width[1] = availableWidth - size - emptySpaceSizeInTheMiddle;
-			widths = 2;
+			types[0] = PartType.Right;
+			types[1] = PartType.Left;
+			widths[0] = size;
+			widths[1] = availableWidth - size - emptySpaceSizeInTheMiddle;
 			break;
 		case Right4Hole:
 			size = (availableWidth / 2 - emptySpaceSizeInTheMiddle) / 4;
-			width[0] = availableWidth - size - emptySpaceSizeInTheMiddle;
-			width[1] = size;
-			widths = 2;
+			types[0] = PartType.Right;
+			types[1] = PartType.Left;
+			widths[0] = availableWidth - size - emptySpaceSizeInTheMiddle;
+			widths[1] = size;
 			break;
 		case Right4MiddleHole:
 			size = (availableWidth / 2 - emptySpaceSizeInTheMiddle) * 0.75f;
-			width[0] = availableWidth - size - emptySpaceSizeInTheMiddle;
-			width[1] = size;
-			widths = 2;
+			types[0] = PartType.Right;
+			types[1] = PartType.Left;
+			widths[0] = availableWidth - size - emptySpaceSizeInTheMiddle;
+			widths[1] = size;
 			break;
 		}
 		
-		float posX = -cameraHalfWidth;
-		for (int i = 0; i < widths; ++i) {
-			Sprite part = partsObject[i];
-			part.setSize(width[i], sizeY);
-			part.setPosition(posX, posY);
-			posX += emptySpaceSizeInTheMiddle + width[i];
+		int spritesCount = 0;
+		
+		for (int i = 0; i < this.partsCount; ++i) {
+			collisionRects[i].set(posX, posY, widths[i], sizeY);
+			if (textures.length == 1) {
+				sprites[spritesCount].setBounds(posX, posY, widths[i], sizeY);
+				sprites[spritesCount].setRegion(textures[0]);
+				spritesCount++;
+			} else {				
+				spritesCount += createMultiSprite(
+					spritesCount, posX, posY, widths[i], sizeY, types[i], textures,
+					endPartSize, normalPartSize);
+			}
+
+			posX += emptySpaceSizeInTheMiddle + widths[i];
 		}
+
+		this.spritesCount = spritesCount;
+	}
+
+	private int createMultiSprite(
+		int indx, float x, float y, 
+		float width, float height,
+		PartType type, AtlasRegion[] textures,
+		float endPartSize, float normalPartSize) {
+		int endParts = type == PartType.Both ? 2 : 1;
+		
+		if (type == PartType.Both || type == PartType.Left) {
+			sprites[indx].setBounds(x, y, endPartSize, height);
+			sprites[indx].setRegion(textures[0]);
+			indx += 1;
+			x    += endPartSize;
+		}
+
+		int parts = Math.round((width - endParts * endPartSize) / normalPartSize);
+		float normalPartWidth = (width - endParts * endPartSize) / parts;
+		
+		for (int i = 0; i < parts; i++) {
+			sprites[indx].setBounds(x, y, normalPartWidth, height);
+			sprites[indx].setRegion(textures[1]);
+			x    += normalPartWidth;
+			indx += 1;
+		}
+
+		if (type == PartType.Both || type == PartType.Right) {
+			sprites[indx].setBounds(x, y, endPartSize, height);
+			sprites[indx].setRegion(textures[2]);
+		}
+
+		return parts + endParts;
 	}
 	
 	public int getPartsCount() {
 		return partsCount;
 	}
 	
-	private void initPartsCount() {
-		switch (obstacleType) {
-		case LeftHole: case RightHole: case LeftRightHoles:		
-			partsCount = 1;
-			break;
-		case LeftRightMiddleHoles:
-			partsCount = 3;
-			break;
-		default:
-			//case MiddleHole: case LeftMiddleHole: case RightMiddleHole: 
-			//case Left4Hole: case Right4Hole: case Left4MiddleHole: case Right4MiddleHole
-			partsCount = 2;
-			break;
-		}		
-	}
-
 	public void init(ObstacleTypeEnum obstacleType, GameData gameData, GameManager gameManager) {
 		this.obstacleType = obstacleType;
-		this.initPartsCount();
-		float positionY = gameData.getCameraBottom() - gameData.ObstacleScaleY;
-		
-		switch (partsCount) {
-		case 1:
-			initOnePart(positionY, gameData.CameraHalfWidth, 
-					gameData.ObstacleScaleY,
-					gameData.EmptySpaceSizeInTheMiddle, gameData.EmptySpaceSizeOnTheEnd);
-			break;
-		default:
-			initMoreThanOnePart(positionY, gameData.CameraHalfWidth, gameData.ObstacleScaleY,
-					gameData.EmptySpaceSizeInTheMiddle, gameData.EmptySpaceSizeOnTheEnd);
-			break;	
-		}
-		
-		// init textures
-		for (int i = 0; i < partsCount; ++i) {
-			Sprite part = partsObject[i];
-			gameData.resolveObstacleTexture(part, gameManager);
-		}
-		
-		// enable obstacle
+		initParts(gameData.getCameraBottom() - gameData.ObstacleScaleY, 
+				  gameData.CameraHalfWidth,
+				  gameData.ObstacleScaleY,
+				  gameData.EmptySpaceSizeInTheMiddle,
+				  gameData.EmptySpaceSizeOnTheEnd,
+				  gameData.getLevel().getTextures(),
+				  gameData.getLevel().getEndPartSize(),
+				  gameData.getLevel().getPartSize());
 		this.setIsEnabled(true);
 	}
 
 	public void draw(SpriteBatch spriteBatch) {
-		for (int i = 0; i < partsCount; ++i) {
-			partsObject[i].draw(spriteBatch);
+		for (int i = 0; i < this.spritesCount; ++i) {
+			sprites[i].draw(spriteBatch);
 		}
 	}
 
@@ -193,9 +213,7 @@ public class ObstacleObject {
 	
 	public void setIsEnabled(boolean value) {
 		if (!value) {
-			setYPosition(DefaultYPos);
-			// remove from visible obstacles pool
-			obstaclePool.removeFromVisibles(this);
+			this.partsCount = this.spritesCount = 0;
 		}
 		
 		isEnabled = value;
@@ -203,8 +221,7 @@ public class ObstacleObject {
 	}
 	
 	public float getBottom() {
-		Sprite part = partsObject[0];
-		return part.getY() - part.getHeight();
+		return sprites[0].getY() - sprites[0].getHeight();
 	}
 	
 	public boolean isPassed() {
@@ -216,13 +233,6 @@ public class ObstacleObject {
 	}
 	
 	public Rectangle getBoundRectangle(int i) {
-		return partsObject[i].getBoundingRectangle();
-	}
-	
-	private void setYPosition(float y) {
-		for (int i = 0; i < partsCount; ++i) {
-			Sprite part = partsObject[i];
-			part.setY(y);
-		}
+		return collisionRects[i];
 	}
 }
