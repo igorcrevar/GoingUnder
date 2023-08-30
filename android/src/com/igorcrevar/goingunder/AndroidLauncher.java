@@ -51,64 +51,62 @@ public class AndroidLauncher extends AndroidApplication {
 
 			@Override
 			public void finishGame(GameManager gameManager) {
-				if (achievementClient == null || leaderboardsClient == null) {
-					return;
-				}
-
 				long score = gameManager.getCurrentScore();
 				int totalPlays = gameManager.getTotalGamesPlayed();
 				int totalScoresEver = gameManager.getTotalScoreSum();
 
-				leaderboardsClient.submitScore(getString(R.string.leaderboard_high_score), score);
-
-				if (score >= 8) {
-					achievementClient.unlock(getString(R.string.achievement_gamer_wanna_be));
+				if (leaderboardsClient != null) {
+					leaderboardsClient.submitScore(getString(R.string.leaderboard_high_score), score);
 				}
 
-				if (score >= 20) {
-					achievementClient.unlock(getString(R.string.achievement_things_getting_better));
-				}
+				if (achievementClient != null) {
+					if (score >= 5) {
+						achievementClient.unlock(getString(R.string.achievement_gamer_wanna_be));
+					}
 
-				if (totalPlays >= 50) {
-					achievementClient.unlock(getString(R.string.achievement_persistence_is_key));
-				}
+					if (score >= 20) {
+						achievementClient.unlock(getString(R.string.achievement_things_getting_better));
+					}
 
-				if (totalScoresEver >= 400) {
-					achievementClient.unlock(getString(R.string.achievement_almost_there));
-				}
+					if (totalPlays >= 50) {
+						achievementClient.unlock(getString(R.string.achievement_persistence_is_key));
+					}
 
-				if (score >= 60) {
-					achievementClient.unlock(getString(R.string.achievement_rock_star));
-				}
+					if (totalScoresEver >= 400) {
+						achievementClient.unlock(getString(R.string.achievement_almost_there));
+					}
 
-				if (score >= 100) {
-					achievementClient.unlock(getString(R.string.achievement_master_com));
-				}
+					if (score >= 60) {
+						achievementClient.unlock(getString(R.string.achievement_rock_star));
+					}
 
-				if (score >= 150) {
-					achievementClient.unlock(getString(R.string.achievement_the_king_of_kong));
+					if (score >= 100) {
+						achievementClient.unlock(getString(R.string.achievement_master_com));
+					}
+
+					if (score >= 150) {
+						achievementClient.unlock(getString(R.string.achievement_the_king_of_kong));
+					}
 				}
 			}
 
 			@Override
 			public void showAchievements() {
-				if (achievementClient == null) {
-					return;
+				if (achievementClient != null) {
+					achievementClient.getAchievementsIntent().addOnSuccessListener(
+							intent -> startActivityForResult(intent, 0x666)
+					);
 				}
-				achievementClient.getAchievementsIntent().addOnSuccessListener(
-					intent -> startActivityForResult(intent, 0x666)
-				);
 			}
 
 			@Override
 			public void showLeaderboards() {
-				if (leaderboardsClient == null) {
-					return;
+				if (leaderboardsClient != null) {
+					String ln = getString(R.string.leaderboard_high_score);
+					leaderboardsClient.getLeaderboardIntent(ln).addOnSuccessListener(
+							intent -> startActivityForResult(intent,  0x777)
+					);
 				}
-				Task<Intent> i = leaderboardsClient.getLeaderboardIntent(getString(R.string.leaderboard_high_score));
-				i.addOnSuccessListener(
-					intent -> startActivityForResult(intent,  0x777)
-				);
 			}
 		}), config);
 	}

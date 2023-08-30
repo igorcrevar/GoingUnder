@@ -49,7 +49,7 @@ public class GameManager {
 		isSoundOn = prefs.getBoolean(SoundOn, true);
 		totalGamesPlayed = prefs.getInteger(TotalGamesPlayed, 0);
 		totalScoreSum = prefs.getInteger(TotalScoreSum, 0);
-		
+
 		// add all needed assets to queue
 		assetManager.load("fonts/arial64.fnt", BitmapFont.class);
 		assetManager.load("atlases/game.atlas", TextureAtlas.class);

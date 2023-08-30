@@ -9,7 +9,7 @@ HAPPY if you tell/notify me about that. At least put a comment on google play li
 
 #### How to Build
 - Open project with Android Studio
-  Read more details on: https://libgdx.com/wiki/start/setup
+- Read more details on: https://libgdx.com/wiki/start/setup
 
 #### Google Play Desc
 

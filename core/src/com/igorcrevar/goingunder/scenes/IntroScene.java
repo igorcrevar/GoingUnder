@@ -172,13 +172,13 @@ public class IntroScene implements IScene {
 			return "Tap left...";
 		}
 		else if (animationTimer < MaximumAnimTimerValue / 2.0f) {
-			return "...to push imp right!";
+			return "...to push our hero right!";
 			
 		}
 		else if (animationTimer < MaximumAnimTimerValue / 4.0f * 3.0f) {
 			return "Tap right...";
 		}
 
-		return "...to push imp left!";
+		return "...to push our hero left!";
 	}
 }
