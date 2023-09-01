@@ -13,8 +13,8 @@ arrow
 background
   rotate: false
   xy: 498, 1
-  size: 13, 508
-  orig: 13, 508
+  size: 13, 254
+  orig: 13, 254
   offset: 0, 0
   index: -1
 bubble

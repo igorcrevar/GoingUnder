@@ -15,18 +15,20 @@ import com.igorcrevar.goingunder.objects.IntroSceneButtons;
 import com.igorcrevar.goingunder.objects.Player;
 import com.igorcrevar.goingunder.utils.BitmapFontDrawer;
 import com.igorcrevar.goingunder.utils.GameHelper;
+import com.igorcrevar.goingunder.utils.MyFontDrawer;
 import com.igorcrevar.goingunder.utils.MyFontDrawerBatch;
 import com.igorcrevar.goingunder.utils.MyFontDrawerDefaultFont;
 
 public class IntroScene implements IScene {
 	private static final float MaximumAnimTimerValue = 6.0f;
+
 	private IGameObject background;
 	private final GameData gameData = GameData.createForIntro();
 	
 	private final SpriteBatch spriteBatch = new SpriteBatch();
 	
 	private GameManager gameManager;
-		
+
 	// buttons
 	private IntroSceneButtons introButtons;
 	
@@ -38,10 +40,13 @@ public class IntroScene implements IScene {
 	private int playerDir;	
 	private String scoreInfo;
 	private float animationTimer;
+	private float titleAnimateTimer;
 	private final Random rnd = new Random();
 	private int hintType;
 
 	private ParticleEffect particles;
+
+	private final MyFontDrawer[] myFontDrawers = new MyFontDrawer[2];
 	
 	public IntroScene(IActivityRequestHandler activityRequestHandler) {
 		this.activityRequestHandler = activityRequestHandler;
@@ -56,14 +61,19 @@ public class IntroScene implements IScene {
 		particles = new ParticleEffect(gameManager, player, gameData);
 				
 		// my font
-		myFontDrawerBatch.addNew("Going", 
-				gameManager.getTextureAtlas("game").findRegion("title2"), 40, 1880, 35, 35, 20, 0.00001f);
+		myFontDrawers[0] = myFontDrawerBatch.addNew("Going", 
+				gameManager.getTextureAtlas("game").findRegion("title2"), 
+				0f, myFontDrawerBatch.getHeight() - 250f,
+				25, 25, 20, 0.00001f, true);
 		
-		myFontDrawerBatch.addNew("Under", 
-				gameManager.getTextureAtlas("game").findRegion("title2"), 90, 1610, 35, 35, 20, 0.00001f);
+		myFontDrawers[1] = myFontDrawerBatch.addNew("Under", 
+				gameManager.getTextureAtlas("game").findRegion("title2"), 
+				0f, myFontDrawerBatch.getHeight() - 500f,
+				25, 25, 20, 0.00001f, true);
 		
-		myFontDrawerBatch.addNew("(c) WayILook@Games 2014", 
-				gameManager.getTextureAtlas("game").findRegion("titlebubble"), 10, 95, 9, 9, 4, 0.00001f);
+		myFontDrawerBatch.addNew("WayILook@Games 2014", 
+				gameManager.getTextureAtlas("game").findRegion("titlebubble"),
+				0, 95, 8, 8, 4, 0.00001f, true);
 		
 		introButtons = new IntroSceneButtons(sceneManager, activityRequestHandler, gameManager);
 	}
@@ -77,6 +87,7 @@ public class IntroScene implements IScene {
 		particles.init(gameData);
 		gameData.CameraYPosition = 0.0f;
 		animationTimer = 0.0f;
+		titleAnimateTimer = 0.0f;
 		playerDir = 0;
 		scoreInfo = Integer.toString(gameManager.getTopScore());
 		hintType = rnd.nextInt(3);
@@ -86,6 +97,20 @@ public class IntroScene implements IScene {
 	public void update(ISceneManager sceneManager, float deltaTime) {
 		GameHelper.clearScreen();
 
+		// animate title
+		// [0..PI/2], [PI..PI*1.5] = 1, [PI/2..PI], [PI*1/5..PI*2] = 2
+		int titleSpeedFactorIndex = (int)(titleAnimateTimer / Math.PI * 2); // [0,1,2,3]
+		float titleSpeedFactor = (titleSpeedFactorIndex & 1) * 2f + 2f;
+		float titleX = (float)Math.sin(titleAnimateTimer) * 80f;
+
+		myFontDrawers[0].translate(
+			titleX,
+			titleX * titleX * 0.02f);
+		myFontDrawers[1].translate(
+			titleX,
+			titleX * titleX * 0.02f);
+		titleAnimateTimer = (titleAnimateTimer + deltaTime * titleSpeedFactor) % ((float)Math.PI * 2);
+	
 		background.update(deltaTime);
 		player.update(deltaTime);
 		particles.update(deltaTime);
@@ -174,14 +199,14 @@ public class IntroScene implements IScene {
 		}
 		
 		if (animationTimer < MaximumAnimTimerValue / 4.0f) {
-			return "Tap left...";
+			return "Tap left screen side...";
 		}
 		else if (animationTimer < MaximumAnimTimerValue / 2.0f) {
 			return "...to push our hero right!";
 			
 		}
 		else if (animationTimer < MaximumAnimTimerValue / 4.0f * 3.0f) {
-			return "Tap right...";
+			return "Tap right screen side...";
 		}
 
 		return "...to push our hero left!";

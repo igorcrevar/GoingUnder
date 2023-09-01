@@ -81,7 +81,8 @@ public class GameScene implements IScene {
 		
 		// my font
 		myFontDrawer = myFontDrawerBatch.addNew("Game Over", 
-						gameManager.getTextureAtlas("game").findRegion("titlebubble"), 0, 0, 20, 40, 20, 0.00001f);
+						gameManager.getTextureAtlas("game").findRegion("titlebubble"),
+						0, 0, 20, 40, 10, 0.00001f, true);
 		
 		// buttons
 		endGameButtons = new EndGameButtons(sceneManager, activityRequestHandler, gameManager);
@@ -226,7 +227,7 @@ public class GameScene implements IScene {
 
 			float cr = Mathf.lerp(initialY, endY, additionalTimer / 2.5f);
 
-			myFontDrawer.translate(50, cr + 400);
+			myFontDrawer.translate(0, cr + 400);
 			myFontDrawerBatch.draw();
 
 			cr += 50.0f;

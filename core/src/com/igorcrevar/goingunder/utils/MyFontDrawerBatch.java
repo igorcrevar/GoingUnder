@@ -10,13 +10,17 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Disposable;
 
 public class MyFontDrawerBatch implements Disposable {
+	private static final float Width = 1080f;
+
 	private ShaderProgram sp;
+	private float height;
 	private IMyFontDrawerFont myFont;
 	private ArrayList<MyFontDrawer> fonts = new ArrayList<MyFontDrawer>(4);
 	private Matrix4 projectionMatrix = new Matrix4();
 	
 	public MyFontDrawerBatch(IMyFontDrawerFont myFont) {
 		this.myFont = myFont;
+		this.height = (float)Math.floor((float)Gdx.graphics.getHeight() / Gdx.graphics.getWidth() * Width);
 		
 		String vertexShader = "attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
 				+ "attribute vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
@@ -48,6 +52,17 @@ public class MyFontDrawerBatch implements Disposable {
 			TextureRegion textureRegion, 
 			float startX, float startY,
 			float width, float height, float letterPadding, float cellPadding) {
+		return addNew(value, textureRegion, startX, startY, width, height, letterPadding, cellPadding, false);
+	}
+
+	public MyFontDrawer addNew(String value, 
+			TextureRegion textureRegion, 
+			float startX, float startY,
+			float width, float height, float letterPadding, float cellPadding, boolean centerX) {
+		if (centerX) {
+			float len = this.getTextWidth(value, width, letterPadding, cellPadding);
+			startX = (Width - len) / 2f + startX;
+		}
 		MyFontDrawer drawer = new MyFontDrawer(myFont, value, textureRegion, 
 				startX, startY, width, height, letterPadding, cellPadding);
 		fonts.add(drawer);
@@ -62,7 +77,7 @@ public class MyFontDrawerBatch implements Disposable {
 		sp.bind();
 		sp.setUniformi("u_texture", 0);
 		for (MyFontDrawer fd : fonts) {
-			projectionMatrix.setToOrtho2D(0, 0, 1080, 1920);
+			projectionMatrix.setToOrtho2D(0, 0, Width, height);
 			sp.setUniformMatrix("u_projTrans", projectionMatrix.mul(fd.getViewModelMatrix()));
 			fd.draw(sp);	
 		}
@@ -74,5 +89,23 @@ public class MyFontDrawerBatch implements Disposable {
 			fd.dispose();
 		}
 		sp.dispose();
+	}
+
+	public float getTextWidth(String txt, float voxelWidth, float letterPadding, float cellPadding) {
+		int spacesNum = 0;
+		for (int i = 0; i < txt.length(); ++i) {
+			char c = txt.charAt(i);
+			if (c == ' ') {
+				spacesNum++;
+			}
+		}
+
+		int num = txt.length() - spacesNum;
+		int charWidth = myFont.getCharWidth();
+		return voxelWidth * num * charWidth + (num-1) * letterPadding + cellPadding * num * (charWidth-1) + spacesNum * voxelWidth * 2;
+	}
+
+	public float getHeight() {
+		return height;
 	}
 }
