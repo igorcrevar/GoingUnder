@@ -15,6 +15,7 @@ import com.igorcrevar.goingunder.objects.IntroSceneButtons;
 import com.igorcrevar.goingunder.objects.Player;
 import com.igorcrevar.goingunder.utils.BitmapFontDrawer;
 import com.igorcrevar.goingunder.utils.GameHelper;
+import com.igorcrevar.goingunder.utils.Mathf;
 import com.igorcrevar.goingunder.utils.MyFontDrawer;
 import com.igorcrevar.goingunder.utils.MyFontDrawerBatch;
 import com.igorcrevar.goingunder.utils.MyFontDrawerDefaultFont;
@@ -46,7 +47,7 @@ public class IntroScene implements IScene {
 
 	private ParticleEffect particles;
 
-	private final MyFontDrawer[] myFontDrawers = new MyFontDrawer[2];
+	private final MyFontDrawer[] titleDrawers = new MyFontDrawer[2];
 	
 	public IntroScene(IActivityRequestHandler activityRequestHandler) {
 		this.activityRequestHandler = activityRequestHandler;
@@ -59,21 +60,21 @@ public class IntroScene implements IScene {
 		player = gameManager.getPlayer();
 		background = gameManager.getBackground();
 		particles = new ParticleEffect(gameManager, player, gameData);
-				
+
 		// my font
-		myFontDrawers[0] = myFontDrawerBatch.addNew("Going", 
+		titleDrawers[0] = myFontDrawerBatch.addNew("Going",
 				gameManager.getTextureAtlas("game").findRegion("title2"), 
-				0f, myFontDrawerBatch.getHeight() - 250f,
-				25, 25, 20, 0.00001f, true);
-		
-		myFontDrawers[1] = myFontDrawerBatch.addNew("Under", 
+				25, 25, 20, 0.00001f);
+		titleDrawers[1] = myFontDrawerBatch.addNew("Under",
 				gameManager.getTextureAtlas("game").findRegion("title2"), 
-				0f, myFontDrawerBatch.getHeight() - 500f,
-				25, 25, 20, 0.00001f, true);
-		
-		myFontDrawerBatch.addNew("WayILook@Games 2014", 
+				25, 25, 20, 0.00001f);
+
+		MyFontDrawer copyright = myFontDrawerBatch.addNew("WayILook@Games 2014",
 				gameManager.getTextureAtlas("game").findRegion("titlebubble"),
-				0, 95, 8, 8, 4, 0.00001f, true);
+				 8, 8, 4, 0.00001f);
+		copyright.idt().translate(
+				(myFontDrawerBatch.getWidth() - copyright.getWidth()) / 2.0f,
+				95f);
 		
 		introButtons = new IntroSceneButtons(sceneManager, activityRequestHandler, gameManager);
 	}
@@ -102,13 +103,18 @@ public class IntroScene implements IScene {
 		int titleSpeedFactorIndex = (int)(titleAnimateTimer / Math.PI * 2); // [0,1,2,3]
 		float titleSpeedFactor = (titleSpeedFactorIndex & 1) * 2f + 2f;
 		float titleX = (float)Math.sin(titleAnimateTimer) * 80f;
+		float titleY = titleX * titleX * 0.02f;
+		float titleAngle = Mathf.lerpBI(-0.1f, 0.2f,
+				titleAnimateTimer / (float)Math.PI / 2);
 
-		myFontDrawers[0].translate(
-			titleX,
-			titleX * titleX * 0.02f);
-		myFontDrawers[1].translate(
-			titleX,
-			titleX * titleX * 0.02f);
+		titleDrawers[0].idt()
+				.translate(titleX + (myFontDrawerBatch.getWidth() - titleDrawers[0].getWidth()) / 2.0f,
+						titleY + myFontDrawerBatch.getHeight() - 200f)
+				.rotateXYRad(titleAngle);
+		titleDrawers[1].idt()
+				.translate(titleX + (myFontDrawerBatch.getWidth() - titleDrawers[1].getWidth()) / 2.0f,
+						titleY + myFontDrawerBatch.getHeight() - 450f)
+				.rotateXYRad(titleAngle);
 		titleAnimateTimer = (titleAnimateTimer + deltaTime * titleSpeedFactor) % ((float)Math.PI * 2);
 	
 		background.update(deltaTime);
@@ -140,7 +146,7 @@ public class IntroScene implements IScene {
 		
 		myFontDrawerBatch.draw();
 		
-		drawText(spriteBatch);
+		drawText();
 		introButtons.draw(spriteBatch);
 	}
 
@@ -167,7 +173,7 @@ public class IntroScene implements IScene {
 		myFontDrawerBatch.dispose();
 	}
 	
-	private void drawText(SpriteBatch spriteBatch) {
+	private void drawText() {
 		BitmapFontDrawer bfDrawer = gameManager.getBitmapFontDrawer();
 		// draw top score above player
 		float posX = ((player.getX() + gameData.CameraHalfWidth) / gameData.CameraHalfWidth)
@@ -180,7 +186,7 @@ public class IntroScene implements IScene {
 				.setColor(Color.ORANGE)
 				.setScale(1.0f)
 				.draw(scoreInfo, posX, posY, BitmapFontDrawer.Flag.Middle, BitmapFontDrawer.Flag.Middle)
-				.draw(getTutorialText(), 0.0f, 850f, BitmapFontDrawer.Flag.Center)
+				.draw(getTutorialText(), 0.0f, 800f, BitmapFontDrawer.Flag.Center)
 				.end();
 	}
 	

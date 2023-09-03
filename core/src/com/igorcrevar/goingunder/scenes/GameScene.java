@@ -50,7 +50,7 @@ public class GameScene implements IScene {
 	
 	// my font
 	private MyFontDrawerBatch myFontDrawerBatch = new MyFontDrawerBatch(new MyFontDrawerDefaultFont());
-	private MyFontDrawer myFontDrawer;
+	private MyFontDrawer gameOverDrawer;
 	private final IActivityRequestHandler activityRequestHandler;
 	
 	// buttons
@@ -80,9 +80,9 @@ public class GameScene implements IScene {
 		particles = new ParticleEffect(gameManager, player, gameData);
 		
 		// my font
-		myFontDrawer = myFontDrawerBatch.addNew("Game Over", 
-						gameManager.getTextureAtlas("game").findRegion("titlebubble"),
-						0, 0, 20, 40, 10, 0.00001f, true);
+		gameOverDrawer = myFontDrawerBatch.addNew("Game Over",
+				gameManager.getTextureAtlas("game").findRegion("titlebubble"),
+				20, 40, 10, 0.00001f);
 		
 		// buttons
 		endGameButtons = new EndGameButtons(sceneManager, activityRequestHandler, gameManager);
@@ -122,7 +122,7 @@ public class GameScene implements IScene {
 				// update
 				update(deltaTime);
 				// obstacles generation
-				obstacleGeneration(deltaTime);
+				obstacleGeneration();
 				// detect collision
 				if (gameData.DieOnCollision && collisionResolver.detect(player, obstaclePool.getAllVisibles())) {
 					playerDies(sceneManager);
@@ -222,22 +222,24 @@ public class GameScene implements IScene {
 
 		if (status == GameManager.Status.NotActive) {
 			String best = Integer.toString(gameManager.getTopScore());
-			float initialY = bfDrawer.getHeight() * 1.2f; //  1920 + 400;
-			float endY = bfDrawer.getHeight() * 0.44f; // 860;
+			String timesPlayed = Integer.toString(gameManager.getTotalGamesPlayed());
+			float initialY = bfDrawer.getHeight() * 1.2f + 400;
+			float endY = bfDrawer.getHeight() * 0.44f + 400;
+			float gameOverYPos = Mathf.lerp(initialY, endY, additionalTimer / 2.5f);
 
-			float cr = Mathf.lerp(initialY, endY, additionalTimer / 2.5f);
-
-			myFontDrawer.translate(0, cr + 400);
+			gameOverDrawer.idt().translate(
+					(myFontDrawerBatch.getWidth() - gameOverDrawer.getWidth()) / 2f,
+					gameOverYPos);
 			myFontDrawerBatch.draw();
-
-			cr += 50.0f;
 
 			bfDrawer.begin()
 					.setScale(1.0f)
 					.setColor(Color.ORANGE)
-					.draw( "Best", 0f, cr - 170f, BitmapFontDrawer.Flag.Center)
+					.draw("Best", 300f, gameOverYPos - 350f)
+					.draw("Plays", 300f, gameOverYPos - 450f)
 					.setColor(Color.WHITE)
-					.draw(best, 0.0f, cr - 255f, BitmapFontDrawer.Flag.Center)
+					.draw(best, 300f, gameOverYPos - 350f, BitmapFontDrawer.Flag.AlignTopOrRight)
+					.draw(timesPlayed, 300f, gameOverYPos - 450f, BitmapFontDrawer.Flag.AlignTopOrRight)
 					.draw(score,  0.0f, bfDrawer.getHeight(), BitmapFontDrawer.Flag.Center, BitmapFontDrawer.Flag.Middle);
 			if (gameData.DrawFPS) {
 				bfDrawer.draw("fps:" + Gdx.graphics.getFramesPerSecond(), 26f, 65f);
@@ -284,7 +286,7 @@ public class GameScene implements IScene {
 		}
 	}
 
-	private void obstacleGeneration(float delta) {
+	private void obstacleGeneration() {
 		// generate obstacles
 		if (-gameData.CameraYPosition + prevCameraYWhenObstacleIsGenerated >= gameData.ObstacleGeneratorDistance) {		
 			obstaclePool.getOne(myRandom.getNext(), gameData, gameManager);

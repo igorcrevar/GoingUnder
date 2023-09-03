@@ -48,27 +48,17 @@ public class MyFontDrawerBatch implements Disposable {
 			throw new IllegalStateException(sp.getLog());
 	}
 	
-	public MyFontDrawer addNew(String value, 
+	public MyFontDrawer addNew(
+			String txt,
 			TextureRegion textureRegion, 
-			float startX, float startY,
-			float width, float height, float letterPadding, float cellPadding) {
-		return addNew(value, textureRegion, startX, startY, width, height, letterPadding, cellPadding, false);
-	}
-
-	public MyFontDrawer addNew(String value, 
-			TextureRegion textureRegion, 
-			float startX, float startY,
-			float width, float height, float letterPadding, float cellPadding, boolean centerX) {
-		if (centerX) {
-			float len = this.getTextWidth(value, width, letterPadding, cellPadding);
-			startX = (Width - len) / 2f + startX;
-		}
-		MyFontDrawer drawer = new MyFontDrawer(myFont, value, textureRegion, 
-				startX, startY, width, height, letterPadding, cellPadding);
+			float width, float height,
+			float letterPadding, float cellPadding) {
+		MyFontDrawer drawer = new MyFontDrawer(myFont, txt, textureRegion,
+				width, height, letterPadding, cellPadding);
 		fonts.add(drawer);
 		return drawer;
 	}
-	
+
 	public void draw() {
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -91,21 +81,9 @@ public class MyFontDrawerBatch implements Disposable {
 		sp.dispose();
 	}
 
-	public float getTextWidth(String txt, float voxelWidth, float letterPadding, float cellPadding) {
-		int spacesNum = 0;
-		for (int i = 0; i < txt.length(); ++i) {
-			char c = txt.charAt(i);
-			if (c == ' ') {
-				spacesNum++;
-			}
-		}
-
-		int num = txt.length() - spacesNum;
-		int charWidth = myFont.getCharWidth();
-		return voxelWidth * num * charWidth + (num-1) * letterPadding + cellPadding * num * (charWidth-1) + spacesNum * voxelWidth * 2;
-	}
-
 	public float getHeight() {
 		return height;
 	}
+
+	public float getWidth() { return Width; }
 }

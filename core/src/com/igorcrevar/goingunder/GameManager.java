@@ -19,7 +19,7 @@ public class GameManager {
 	public enum Status {
 		Resuming, Paused, Active, NotActive
 	}
-	private final static float MusicVolume = 0.8f;
+	private final static float MusicVolume = 0.85f;
 	private final static int BitmapFontDrawerFakeXResolution = 1080;
 	private final static String GameSaves = "game_saves";
 	private final static String TopScore = "top_score";

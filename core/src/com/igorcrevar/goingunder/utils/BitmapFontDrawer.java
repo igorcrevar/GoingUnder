@@ -12,6 +12,7 @@ public class BitmapFontDrawer implements Disposable  {
         Base,
         Center,
         Middle,
+        AlignTopOrRight,
     }
 
     private final float width;
@@ -38,7 +39,7 @@ public class BitmapFontDrawer implements Disposable  {
         this.width = width;
         this.height = (float)Math.floor(width * aspect);
         this.glyphLayout = new GlyphLayout();
-        this.shadowColor = Color.BLACK;
+        this.shadowColor = new Color(0, 0, 0, 0.5f);
         this.shadowOffsetX = 8.0f;
         this.shadowOffsetY = 6.0f;
         spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, width, height);
@@ -99,6 +100,9 @@ public class BitmapFontDrawer implements Disposable  {
             case Middle:
                 finalX = x - this.glyphLayout.width / 2.0f;
                 break;
+            case AlignTopOrRight:
+                finalX = this.width - this.glyphLayout.width - x;
+                break;
         }
 
         switch (yOptions) {
@@ -107,6 +111,9 @@ public class BitmapFontDrawer implements Disposable  {
                 break;
             case Middle:
                 finalY = y - this.glyphLayout.height / 2.0f;
+                break;
+            case AlignTopOrRight:
+                finalY = this.height - this.glyphLayout.height - y;
                 break;
         }
 

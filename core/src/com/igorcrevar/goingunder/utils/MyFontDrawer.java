@@ -7,40 +7,38 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 
 public class MyFontDrawer implements Disposable {
-	private String value;
 	private Mesh mesh;
-	private float width;
-	private float height;
-	private float letterPadding;
-	private float cellPadding;
 	private TextureRegion textureRegion;
 	private IMyFontDrawerFont font;
+	private float width;
+	private float height;
 	private int visibleRectCnt = -1;
-	private Matrix4 viewModelMatrix = new Matrix4();
+	private Matrix4 viewModelMatrix = new Matrix4().idt();
 	
-	public MyFontDrawer(IMyFontDrawerFont font, String value, 
+	public MyFontDrawer(IMyFontDrawerFont font,
+						String txt,
 						TextureRegion textureRegion, 
-						float startX, float startY,
-						float width, float height, float letterPadding, float cellPadding) {
+						float voxelWidth, float voxelHeight,
+						float letterPadding, float cellPadding) {
 		this.font = font;
-		this.value = value;
-		this.width= width;
-		this.height = height;
-		this.letterPadding = letterPadding;
-		this.cellPadding = cellPadding;
 		this.textureRegion = textureRegion;
-		init(startX, startY);
+		init(txt, voxelWidth, voxelHeight, letterPadding, cellPadding);
 	}
 	
-	private void init(float startX, float startY) {
-		this.calculateVisibleRectangles();
+	private void init(
+			String txt,
+			float voxelWidth, float voxelHeight,
+			float letterPadding,  float cellPadding) {
+		this.calculateWidthAndHeight(txt, voxelWidth, voxelHeight, letterPadding, cellPadding);
+		this.calculateVisibleRectangles(txt);
 		mesh = new Mesh(true, getVertexCount(), getIndicesCount(),
                 new VertexAttribute(Usage.Position, 2, ShaderProgram.POSITION_ATTRIBUTE),
                 new VertexAttribute(Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0"));
-		
+
 		int vertexCount = getVertexCount();
 		int indicesCount = getIndicesCount();
 		
@@ -50,8 +48,8 @@ public class MyFontDrawer implements Disposable {
 		short[] indices = new short[indicesCount];
 		
 		byte numberOfSpaces = 0;
-		for (int i = 0; i < value.length(); ++i) {
-			char c = value.charAt(i);
+		for (int i = 0; i < txt.length(); ++i) {
+			char c = txt.charAt(i);
 			if (c == ' ') {
 				++numberOfSpaces;
 				continue;
@@ -60,18 +58,18 @@ public class MyFontDrawer implements Disposable {
 			for (int row = 0; row < font.getCharHeight(); ++row) {
 				for (int col = 0; col < font.getCharWidth(); ++col) {
 					if (font.isSet(c, row, col)) {							
-						float x = startX;
+						float x = 0f;
 						if (col > 0) {
-							x += (cellPadding + width) * col;
+							x += (cellPadding + voxelWidth) * col;
 						}
 						if (i > 0) {
-							x += (letterPadding + (font.getCharWidth() - 1) * (cellPadding + width) + width)  * (i - numberOfSpaces);
-							x += numberOfSpaces * width * 2;
+							x += (letterPadding + (font.getCharWidth() - 1) * (cellPadding + voxelWidth) + voxelWidth)  * (i - numberOfSpaces);
+							x += numberOfSpaces * voxelWidth * 2;
 						}
 						
-						float y = startY;
+						float y = 0f;
 						if (row > 0) {
-							y -= (cellPadding + height) * row;
+							y -= (cellPadding + voxelHeight) * row;
 						}
 						
 						short vIndexReal = (short)(4 * vIndex);
@@ -79,19 +77,19 @@ public class MyFontDrawer implements Disposable {
 						vertices[vIndexReal++] = y;
 						vertices[vIndexReal++] = textureRegion.getU();
 						vertices[vIndexReal++] = textureRegion.getV();														
-						vertices[vIndexReal++] = x + width;   
+						vertices[vIndexReal++] = x + voxelWidth;
 						vertices[vIndexReal++] = y;
 						vertices[vIndexReal++] = textureRegion.getU2();
 						vertices[vIndexReal++] = textureRegion.getV();
-						vertices[vIndexReal++] = x + width;
-						vertices[vIndexReal++] = y - height;
+						vertices[vIndexReal++] = x + voxelWidth;
+						vertices[vIndexReal++] = y - voxelHeight;
 						vertices[vIndexReal++] = textureRegion.getU2();
 						vertices[vIndexReal++] = textureRegion.getV2();							
 						vertices[vIndexReal++] = x;   
-						vertices[vIndexReal++] = y - height;
+						vertices[vIndexReal++] = y - voxelHeight;
 						vertices[vIndexReal++] = textureRegion.getU();
-						vertices[vIndexReal++] = textureRegion.getV2();
-						
+						vertices[vIndexReal] = textureRegion.getV2();
+
 						indices[iIndex] = vIndex;
 						indices[iIndex + 1] = (short)(vIndex + 1);
 						indices[iIndex + 2] = (short)(vIndex + 2);
@@ -109,16 +107,22 @@ public class MyFontDrawer implements Disposable {
 		mesh.setIndices(indices);
 		mesh.setVertices(vertices);
 	}
-	
-	public String getValue() {
-		return value;
-	}
-	
-	public void translate(float x, float y) {
+
+	public MyFontDrawer idt() {
 		viewModelMatrix.idt();
-		viewModelMatrix.translate(x, y, 0.0f);
+		return this;
 	}
-	
+
+	public MyFontDrawer translate(float x, float y) {
+		viewModelMatrix.translate(x, y, 0.0f);
+		return this;
+	}
+
+	public MyFontDrawer rotateXYRad(float angle) {
+		viewModelMatrix.rotateRad(Vector3.Z, angle);
+		return this;
+	}
+
 	public void draw(ShaderProgram sp) {
 		mesh.render(sp, GL20.GL_TRIANGLES);
 	}
@@ -131,10 +135,10 @@ public class MyFontDrawer implements Disposable {
 		return visibleRectCnt * 6;
 	}
 	
-	private void calculateVisibleRectangles() {
+	private void calculateVisibleRectangles(String txt) {
 		visibleRectCnt = 0;
-		for (int i = 0; i < value.length(); ++i) {
-			char c = value.charAt(i);
+		for (int i = 0; i < txt.length(); ++i) {
+			char c = txt.charAt(i);
 			for (int j = 0; j < font.getCharHeight(); ++j) {
 				for (int k = 0; k < font.getCharWidth(); ++k) {
 					if (font.isSet(c, j, k)) {
@@ -144,12 +148,38 @@ public class MyFontDrawer implements Disposable {
 			}
 		}
 	}
-	
+
+	private void calculateWidthAndHeight(String txt,
+										 float voxelWidth, float voxelHeight,
+										 float letterPadding, float cellPadding) {
+		int spacesNum = 0;
+		for (int i = 0; i < txt.length(); ++i) {
+			char c = txt.charAt(i);
+			if (c == ' ') {
+				spacesNum++;
+			}
+		}
+
+		int num = txt.length() - spacesNum;
+		int charWidth = this.font.getCharWidth();
+		int charHeight = this.font.getCharHeight();
+		this.width = voxelWidth * num * charWidth + (num-1) * letterPadding + cellPadding * num * (charWidth-1) + spacesNum * voxelWidth * 2;
+		this.height = (cellPadding + voxelHeight) * charHeight;
+	}
+
 	public void dispose() {
 		 mesh.dispose();
 	}
 
 	public Matrix4 getViewModelMatrix() {
 		return viewModelMatrix;
+	}
+
+	public float getWidth() {
+		return width;
+	}
+
+	public float getHeight() {
+		return height;
 	}
 }
