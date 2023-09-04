@@ -106,6 +106,10 @@ public class GameData {
 	public float getCameraBottom() {
 		return CameraYPosition - CameraHalfHeight;
 	}
+
+	public float getCameraYCenter() {
+		return CameraYPosition;
+	}
 	
 	public void setProjectionMatrix(Matrix4 matrix) {
 		matrix.setToOrtho(-CameraHalfWidth, CameraHalfWidth, getCameraBottom(), getCameraTop(), 0.0f, 1000.0f);

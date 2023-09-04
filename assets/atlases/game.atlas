@@ -191,4 +191,25 @@ ob2_right
   size: 8, 49
   orig: 8, 49
   offset: 0, 0
-  index: -1   
+  index: -1
+fish11
+  rotate: false
+  xy: 384, 59
+  size: 108, 68
+  orig: 108, 68
+  offset: 0, 0
+  index: -1
+fish12
+  rotate: false
+  xy: 384, 130
+  size: 108, 68
+  orig: 108, 68
+  offset: 0, 0
+  index: -1
+fish13
+  rotate: false
+  xy: 384, 199
+  size: 108, 68
+  orig: 108, 68
+  offset: 0, 0
+  index: -1

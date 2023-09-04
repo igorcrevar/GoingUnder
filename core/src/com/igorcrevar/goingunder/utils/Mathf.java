@@ -20,4 +20,8 @@ public class Mathf {
 		
 		return b + (a - b) * (time - 0.5f) * 2.0f;
 	}
+
+	public static float easeInOut(float t){
+ 		 return t > 0.5f ? 4 * (float)Math.pow(t-1, 3) + 1 : 4 * (float)Math.pow(t, 3);
+	}
 }

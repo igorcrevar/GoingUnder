@@ -17,6 +17,7 @@ import com.igorcrevar.goingunder.objects.IGameObject;
 import com.igorcrevar.goingunder.objects.ParticleEffect;
 import com.igorcrevar.goingunder.objects.ActiveGameButtons;
 import com.igorcrevar.goingunder.objects.Player;
+import com.igorcrevar.goingunder.objects.Fishes;
 import com.igorcrevar.goingunder.objects.obstacles.IObstaclePool;
 import com.igorcrevar.goingunder.objects.obstacles.ObstacleObject;
 import com.igorcrevar.goingunder.objects.obstacles.ObstaclePool;
@@ -32,6 +33,7 @@ public class GameScene implements IScene {
 	private Player player;
 	private GameData gameData;
 	private IGameObject background;
+	private Fishes fishes;
 	
 	private ParticleEffect particles;
 		
@@ -76,7 +78,7 @@ public class GameScene implements IScene {
 		
 		player = gameManager.getPlayer();
 		background = gameManager.getBackground();
-		
+		fishes = new Fishes(gameManager);
 		particles = new ParticleEffect(gameManager, player, gameData);
 		
 		// my font
@@ -98,6 +100,7 @@ public class GameScene implements IScene {
 		player.init(gameData);
 		background.init(gameData);
 		particles.init(gameData);
+		fishes.init(gameData);
 		
 		additionalTimer = 0.0f;
 		resumingCounter = 0.0f;
@@ -132,6 +135,7 @@ public class GameScene implements IScene {
 			case NotActive:
 				particles.update(deltaTime);
 				player.updateDie(additionalTimer, deltaTime);
+				fishes.update(deltaTime);
 				additionalTimer += deltaTime;
 
 				break;
@@ -157,6 +161,7 @@ public class GameScene implements IScene {
 		background.update(deltaTime);
 		player.update(deltaTime);
 		particles.update(deltaTime);
+		fishes.update(deltaTime);
 		
 		ArrayList<ObstacleObject> obstacles = obstaclePool.getAllVisibles();
 		for (int i = obstacles.size() - 1; i >= 0; --i) {
@@ -186,6 +191,9 @@ public class GameScene implements IScene {
 		spriteBatch.begin();
 		// draw background
 		background.draw(spriteBatch);
+
+		// draw fishes
+		fishes.draw(spriteBatch);
 		
 		// draw particles
 		particles.draw(spriteBatch);

@@ -10,7 +10,7 @@ public class GameDataLevelFactory {
 	private static class GameLevel0 extends GameLevel1 {
 		public GameLevel0(GameManager gameManager) {
 			super(gameManager);
-			velocityY = -2.0f;
+			velocityY = -1.8f;
 			friction = 3.5f;
 			emptySpaceSizeInTheMiddle = 1.52f;
 			emptySpaceSizeOnTheEnd = 1.48f;
@@ -33,7 +33,7 @@ public class GameDataLevelFactory {
 		public GameLevel1(GameManager gameManager) {
 			friction = 3.5f;
 			velocityX = 1.8f;
-			velocityY = -2.4f;
+			velocityY = -2.2f;
 			obstacleGeneratorDistance = 5.359f;
 			
 			emptySpaceSizeInTheMiddle = 1.34f;
@@ -75,6 +75,7 @@ public class GameDataLevelFactory {
 	private static class GameLevel11 extends GameLevel1 {
 		public GameLevel11(GameManager gameManager) {
 			super(gameManager);
+			velocityY = -2.4f;
 			emptySpaceSizeInTheMiddle = 1.22f;
 			emptySpaceSizeOnTheEnd = 1.16f;
 			endOnScore = 30;
