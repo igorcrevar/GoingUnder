@@ -1,6 +1,5 @@
 package com.igorcrevar.goingunder;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.igorcrevar.goingunder.statemachine.GeneratorStateMachine;
 import com.igorcrevar.goingunder.statemachine.IGeneratorStateMachine;
@@ -10,11 +9,11 @@ public class GameDataLevelFactory {
 	private static class GameLevel0 extends GameLevel1 {
 		public GameLevel0(GameManager gameManager) {
 			super(gameManager);
-			velocityY = -1.8f;
+			velocityY = -1.6f;
 			friction = 3.5f;
 			emptySpaceSizeInTheMiddle = 1.52f;
 			emptySpaceSizeOnTheEnd = 1.48f;
-			endOnScore = 4;
+			endOnScore = 2;
 		}
 
 		@Override
@@ -33,13 +32,13 @@ public class GameDataLevelFactory {
 		public GameLevel1(GameManager gameManager) {
 			friction = 3.5f;
 			velocityX = 1.8f;
-			velocityY = -2.2f;
+			velocityY = -2.05f;
 			obstacleGeneratorDistance = 5.359f;
 			
 			emptySpaceSizeInTheMiddle = 1.34f;
 			emptySpaceSizeOnTheEnd = 1.28f;
 			boundariesBouncingFactor = 0.5f;
-			endOnScore = 15;
+			endOnScore = 10;
 			textures = getTextures(gameManager);
 		}
 
@@ -75,7 +74,7 @@ public class GameDataLevelFactory {
 	private static class GameLevel11 extends GameLevel1 {
 		public GameLevel11(GameManager gameManager) {
 			super(gameManager);
-			velocityY = -2.4f;
+			velocityY = -2.35f;
 			emptySpaceSizeInTheMiddle = 1.22f;
 			emptySpaceSizeOnTheEnd = 1.16f;
 			endOnScore = 30;
@@ -146,7 +145,9 @@ public class GameDataLevelFactory {
 			boundariesBouncingFactor = 0.5f;
 			endOnScore = 90;
 			textures = new AtlasRegion[] {
-				gameManager.getTextureAtlas("game").findRegion("obstacle3"),
+				gameManager.getTextureAtlas("game").findRegion("ob3_left"),
+				gameManager.getTextureAtlas("game").findRegion("ob3_middle"),
+				gameManager.getTextureAtlas("game").findRegion("ob3_right"),
 			};
 		}
 
@@ -167,7 +168,7 @@ public class GameDataLevelFactory {
 
 		@Override
 		public float getPartSize() {
-			return 0.5f;
+			return 0.6f;
 		}
 	}
 	

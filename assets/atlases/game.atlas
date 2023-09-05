@@ -31,16 +31,9 @@ dummy
   orig: 2, 2
   offset: 0, 0
   index: -1
-obstacle3
-  rotate: false
-  xy: 143, 2
-  size: 139, 49
-  orig: 139, 49
-  offset: 0, 0
-  index: -1
 obstacle4
   rotate: false
-  xy: 284, 2
+  xy: 139, 2
   size: 139, 49
   orig: 139, 49
   offset: 0, 0
@@ -211,5 +204,26 @@ fish13
   xy: 384, 199
   size: 108, 68
   orig: 108, 68
+  offset: 0, 0
+  index: -1
+ob3_left
+  rotate: false
+  xy: 103, 459
+  size: 8, 49
+  orig: 8, 49
+  offset: 0, 0
+  index: -1
+ob3_middle
+  rotate: false
+  xy: 113, 459
+  size: 40, 49
+  orig: 40, 49
+  offset: 0, 0
+  index: -1
+ob3_right
+  rotate: false
+  xy: 155, 459
+  size: 8, 49
+  orig: 8, 49
   offset: 0, 0
   index: -1

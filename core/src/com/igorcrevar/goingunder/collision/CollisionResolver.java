@@ -3,6 +3,7 @@ package com.igorcrevar.goingunder.collision;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.igorcrevar.goingunder.GameData;
@@ -25,29 +26,34 @@ public class CollisionResolver {
 		}
 	}
 	
-	public void draw(ShapeRenderer shapeRenderer, BoundingBox aabb, GameData gameData) {
+	private void draw(ShapeRenderer shapeRenderer, BoundingBox aabb, float cameraY) {
 		Vector2[] t = aabb.getVertices();
 		shapeRenderer.setColor(1, 1, 1, 1);
 		for (int i = 0; i < 4; ++i) {
 			Vector2 a = t[i];
-			Vector2 b = t[(i + 1) % 4];
-			shapeRenderer.line(a.x, a.y  - gameData.CameraYPosition, b.x, b.y - gameData.CameraYPosition);
+			Vector2 b = t[(i + 1) & 3];
+			shapeRenderer.line(a.x, a.y - cameraY, b.x, b.y - cameraY);
 		}		
-	}	
-	public void draw(ShapeRenderer shapeRenderer, BoundingSphere aabb, GameData gameData) {
-		shapeRenderer.setColor(1, 1, 1, 1);
-		shapeRenderer.circle(aabb.getCenter().x, aabb.getCenter().y - gameData.CameraYPosition, aabb.getRadius(), 60);
 	}
+
+	private void draw(ShapeRenderer shapeRenderer, BoundingSphere aabb, float cameraY) {
+		shapeRenderer.setColor(1, 1, 1, 1);
+		shapeRenderer.circle(aabb.getCenter().x, aabb.getCenter().y - cameraY, aabb.getRadius(), 60);
+	}
+
 	public void draw(ShapeRenderer shapeRenderer, GameData gameData) {
-		draw(shapeRenderer, playerBoundingBox, gameData);
-		draw(shapeRenderer, playerBoundingSphere, gameData);
-		draw(shapeRenderer, playerBoundingSphere2, gameData);
+		float cameraY = gameData.getCameraYCenter();
+		shapeRenderer.begin(ShapeType.Line);
+		draw(shapeRenderer, playerBoundingBox, cameraY);
+		draw(shapeRenderer, playerBoundingSphere, cameraY);
+		draw(shapeRenderer, playerBoundingSphere2, cameraY);
 		for (int i = 0; i < currentNumberOfObstacleBBs; ++i) {
-			draw(shapeRenderer, obstacleBoundingBoxes[i], gameData);
+			draw(shapeRenderer, obstacleBoundingBoxes[i], cameraY);
 		}
+		shapeRenderer.end();
 	}
 	
-	public boolean detect(Player player, ArrayList<ObstacleObject> obstacles) {
+	public boolean detect(Player player, ArrayList<ObstacleObject> obstacles, boolean drawCollisions) {
 		// update bounding boxes
 		float angle = (float)(player.getAngle() / 180.f * Math.PI);
 		playerBoundingBox.update(player.getX(), player.getY(), angle);
@@ -55,13 +61,15 @@ public class CollisionResolver {
 		playerBoundingSphere2.update(player.getX(), player.getY(), angle);
 		
 		// just for debug
-		/*currentNumberOfObstacleBBs = 0;
-		for (ObstacleObject oo : obstacles) {
-			for (int i = 0; i < oo.getPartsCount(); ++i) {
-				Rectangle r = oo.getBoundRectangle(i);
-				obstacleBoundingBoxes[currentNumberOfObstacleBBs++].populateFromRectangle(r);
+		if (drawCollisions) {
+			currentNumberOfObstacleBBs = 0;
+			for (ObstacleObject oo : obstacles) {
+				for (int i = 0; i < oo.getPartsCount(); ++i) {
+					Rectangle r = oo.getBoundRectangle(i);
+					obstacleBoundingBoxes[currentNumberOfObstacleBBs++].populateFromRectangle(r);
+				}
 			}
-		}*/
+		}
 		// end just for debug
 		
 		Rectangle playerRect = player.getBoundingRectangle();

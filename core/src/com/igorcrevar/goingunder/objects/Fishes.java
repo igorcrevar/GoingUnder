@@ -12,7 +12,7 @@ import com.igorcrevar.goingunder.GameManager;
 import com.igorcrevar.goingunder.utils.Mathf;
 
 public class Fishes implements IGameObject {
-    private final static int MaxFishes = 5;
+    private final static int MaxFishes = 6;
     private final float RandomProbability = 0.007f;
 
     private class Fish {
@@ -35,14 +35,14 @@ public class Fishes implements IGameObject {
             float sizeY = (float)textures[0].getRegionHeight() / textures[0].getRegionWidth() * sizeX;
             
             this.speed = 0.16f + (float)Math.random() * 0.2f;
-            boolean bottomFish = Math.random() > 0.3f; // better chance
-            // if upper part then go downwards and viceversa (but not whole up or down)
+            boolean bottomFish = Math.random() > 0.3f; // better chance for bottom
+            // if upper part then go downwards. bottom part has more chances to go upwards
             if (bottomFish) {
                 this.startY = (float)(-gameData.CameraHalfHeight * Math.random());
-                this.endY = this.startY - (float)(Math.random() * gd.CameraHalfHeight * 0.3); 
+                this.endY = this.startY + (float)(Math.random() * gd.CameraHalfHeight * 0.5f) - 0.15f * gd.CameraHalfHeight; 
             } else {
                 this.startY = (float)(gameData.CameraHalfHeight * 0.6f * Math.random());
-                this.endY = this.startY + (float)(Math.random() * gd.CameraHalfHeight * 0.3);
+                this.endY = this.startY - (float)(Math.random() * gd.CameraHalfHeight * 0.35);
             }
             this.startY += gd.getCameraYCenter(); // inc for camera position
             this.endY += gd.getCameraYCenter(); // inc for camera position
@@ -65,19 +65,20 @@ public class Fishes implements IGameObject {
             this.dirChanged = false;
         }
 
-        public boolean update(float playerX, float playerY, GameData gd, TextureRegion[] textures, float time) {
+        public boolean update(float playerX, float playerY, float cameraTop, TextureRegion[] textures, float time) {
             float realTime = (time - startTime) * speed;
             float x = Mathf.lerp(this.startX, this.endX, realTime);
             float y = Mathf.lerp(this.startY, this.endY, realTime);
 
             // turn if near player!
-            float playerDist = (x-playerX)*(x-playerX) + (y-playerY)*(y-playerY);
+            float xDiff = x + gameObject.getWidth()/2f - playerX;
+            float yDiff = y + gameObject.getHeight()/2f - playerY;
+            float playerDist = xDiff*xDiff + yDiff*yDiff;
             if (playerDist < 1f && !dirChanged) {
                 this.dirChanged = true;
                 this.speed = this.speed * 2f;
                 this.endX = this.startX;
                 this.startX = x;
-                this.endY = this.startY;
                 this.startY = y;
                 this.startTime = time;
                 this.updateRotation();
@@ -87,10 +88,10 @@ public class Fishes implements IGameObject {
             updateAnimation(textures, time);
 
             if (this.startX < this.endX) {
-                return y <= gd.getCameraTop() && x < this.endX;
+                return y <= cameraTop && x < this.endX;
             }
 
-            return y <= gd.getCameraTop() && x > this.endX;
+            return y <= cameraTop && x > this.endX;
         }
 
         private void updateRotation() {
@@ -149,7 +150,11 @@ public class Fishes implements IGameObject {
 
         for (int i = 0; i < this.aliveFishes; i++) {
             boolean isAlive = this.fishes[i].update(
-                player.getX(), player.getY(), gameData, animation, animationTimer);
+                player.getX(),
+                player.getY(),
+                gameData.getCameraTop(),
+                animation,
+                animationTimer);
             if (!isAlive) {
                 this.aliveFishes--;
                 Fish tmp = this.fishes[i];

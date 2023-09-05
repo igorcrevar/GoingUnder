@@ -6,7 +6,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.igorcrevar.goingunder.GameData;
 import com.igorcrevar.goingunder.GameManager;
 import com.igorcrevar.goingunder.IActivityRequestHandler;
@@ -37,8 +36,8 @@ public class GameScene implements IScene {
 	
 	private ParticleEffect particles;
 		
-	private SpriteBatch spriteBatch = new SpriteBatch();
-	private ShapeRenderer shapeRenderer = new ShapeRenderer();
+	private final SpriteBatch spriteBatch = new SpriteBatch();
+	private final ShapeRenderer shapeRenderer = new ShapeRenderer();
 	
 	private final IMyRandom myRandom;
 	private IObstaclePool obstaclePool;
@@ -48,10 +47,10 @@ public class GameScene implements IScene {
 
 	private final int halfScreen;
 	
-	private CollisionResolver collisionResolver = new CollisionResolver();
+	private final CollisionResolver collisionResolver = new CollisionResolver();
 	
 	// my font
-	private MyFontDrawerBatch myFontDrawerBatch = new MyFontDrawerBatch(new MyFontDrawerDefaultFont());
+	private final MyFontDrawerBatch myFontDrawerBatch = new MyFontDrawerBatch(new MyFontDrawerDefaultFont());
 	private MyFontDrawer gameOverDrawer;
 	private final IActivityRequestHandler activityRequestHandler;
 	
@@ -106,12 +105,7 @@ public class GameScene implements IScene {
 		resumingCounter = 0.0f;
 		myRandom.reset();
 		gameManager.setGameStatus(GameManager.Status.Active);
-		if (gameManager.getTotalScoreSum() <= 5) {
-			prevCameraYWhenObstacleIsGenerated = gameData.CameraYPosition - gameData.ObstacleGeneratorDistance * 0.1f;
-		}
-		else {
-			prevCameraYWhenObstacleIsGenerated = gameData.CameraYPosition + gameData.ObstacleGeneratorDistance * 0.8f;	
-		}
+		prevCameraYWhenObstacleIsGenerated = gameData.CameraYPosition + gameData.ObstacleGeneratorDistance;
 		
 		activeGameButtons.init();
 	}
@@ -127,8 +121,10 @@ public class GameScene implements IScene {
 				// obstacles generation
 				obstacleGeneration();
 				// detect collision
-				if (gameData.DieOnCollision && collisionResolver.detect(player, obstaclePool.getAllVisibles())) {
-					playerDies(sceneManager);
+				if (collisionResolver.detect(player, obstaclePool.getAllVisibles(), gameData.DrawCollision)) {
+					if (gameData.DieOnCollision) {
+						playerDies(sceneManager);
+					}
 				}
 				break;
 
@@ -287,9 +283,7 @@ public class GameScene implements IScene {
 			player.drawLights(shapeRenderer, gameData);
 			// draw collision
 			if (gameData.DrawCollision) {
-				shapeRenderer.begin(ShapeType.Line);
 				collisionResolver.draw(shapeRenderer, gameData);
-				shapeRenderer.end();
 			}
 		}
 	}

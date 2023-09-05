@@ -15,4 +15,6 @@
     <string name="achievement_the_king_of_kong" translatable="false">CgkIzuC6j_4JEAIQCA</string>
     <string name="leaderboard_high_score" translatable="false">CgkIzuC6j_4JEAIQAA</string>
     <string name="share_template">I just got %d points in Going Under! %s</string>
+    <string name="gps_info">Please log in to Google Play Services to access the game features.</string>
+    <string name="information">Info</string>
 </resources>

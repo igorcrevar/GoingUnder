@@ -1,5 +1,6 @@
 package com.igorcrevar.goingunder;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,7 +14,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.games.AchievementsClient;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.LeaderboardsClient;
-import com.google.android.gms.tasks.Task;
 
 public class AndroidLauncher extends AndroidApplication {
 	private AchievementsClient achievementClient;
@@ -96,6 +96,8 @@ public class AndroidLauncher extends AndroidApplication {
 					achievementClient.getAchievementsIntent().addOnSuccessListener(
 							intent -> startActivityForResult(intent, 0x666)
 					);
+				} else {
+					showErrorDialog(getString(R.string.gps_info));
 				}
 			}
 
@@ -106,6 +108,8 @@ public class AndroidLauncher extends AndroidApplication {
 					leaderboardsClient.getLeaderboardIntent(ln).addOnSuccessListener(
 							intent -> startActivityForResult(intent,  0x777)
 					);
+				} else {
+					showErrorDialog(getString(R.string.gps_info));
 				}
 			}
 		}), config);
@@ -129,5 +133,12 @@ public class AndroidLauncher extends AndroidApplication {
 					}
 				}
 		);
+	}
+
+	private void showErrorDialog(String message) {
+		this.runOnUiThread(() -> new AlertDialog.Builder(AndroidLauncher.this)
+				.setTitle(R.string.information).setMessage(message)
+				.setPositiveButton("OK",
+						(dialog, which) -> dialog.dismiss()).create().show());
 	}
 }
