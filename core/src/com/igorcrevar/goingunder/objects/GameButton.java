@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.igorcrevar.goingunder.utils.GameHelper;
 
 public abstract class GameButton {
-	private final Sprite sprite = new Sprite();
-	private boolean isEnabled;
+	protected final Sprite sprite = new Sprite();
+	protected boolean isEnabled;
 	
 	public GameButton(TextureRegion region, float x, float y) {
 		this(region, x, y, 1.0f, 0.98f);

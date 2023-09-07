@@ -17,10 +17,11 @@ import com.igorcrevar.goingunder.utils.Mathf;
 public class TutorialScene implements IScene {
 	private static final float ButtonTimerPause = 0.5f;
 
+	private final SpriteBatch spriteBatch = new SpriteBatch();
+
 	private GameData gameData;
 	private GameManager gameManager;
-	private SpriteBatch spriteBatch;
-	
+
 	private IActivityRequestHandler activityRequestHandler;
 	private boolean isDisposed;
 	
@@ -42,10 +43,9 @@ public class TutorialScene implements IScene {
 	@Override
 	public void create(ISceneManager sceneManager) {
 		this.gameManager = sceneManager.getGameManager();
-		gameData = GameData.createForIntro();
-		gameData.VelocityY = 0f;
-		gameData.CameraDist = 2.8f;
-		spriteBatch = new SpriteBatch();
+		this.gameData = GameData.createForIntro(this.gameManager);
+		this.gameData.VelocityY = 0f;
+		this.gameData.CameraDist = 2.8f;
 		
 		arrow.setRegion(gameManager.getTextureAtlas("game").findRegion("arrow"));
 		arrow.setSize(0.4f, 0.5f);
@@ -167,10 +167,11 @@ public class TutorialScene implements IScene {
 	
 	private void drawDefault() {
 		GameHelper.clearScreen();
-		// draw background and player and arrow and button
-		gameData.setProjectionMatrix(spriteBatch.getProjectionMatrix());		
-		spriteBatch.begin();
+		
 		background.draw(spriteBatch);
+		
+		gameData.setProjectionMatrix(spriteBatch.getProjectionMatrix());
+		spriteBatch.begin();
 		if (buttonTimer >= ButtonTimerPause) {
 			arrow.draw(spriteBatch);
 			button.draw(spriteBatch, buttonAlpha);
@@ -199,10 +200,11 @@ public class TutorialScene implements IScene {
 		player.update(deltaTime);
 		
 		GameHelper.clearScreen();
+		
 		// draw background and player 
-		gameData.setProjectionMatrix(spriteBatch.getProjectionMatrix());		
-		spriteBatch.begin();
 		background.draw(spriteBatch);
+		gameData.setProjectionMatrix(spriteBatch.getProjectionMatrix());
+		spriteBatch.begin();
 		player.draw(spriteBatch);
 		spriteBatch.end();
 		

@@ -130,6 +130,8 @@ public class GameScene implements IScene {
 				break;
 
 			case NotActive:
+				gameData.FishRandomProbability = 0.009f;
+				background.update(deltaTime);
 				particles.update(deltaTime);
 				player.updateDie(additionalTimer, deltaTime);
 				fishes.update(deltaTime);
@@ -184,10 +186,11 @@ public class GameScene implements IScene {
 	}
 	
 	private void draw() {
-		gameData.setProjectionMatrix(spriteBatch.getProjectionMatrix());
-		spriteBatch.begin();
 		// draw background
 		background.draw(spriteBatch);
+		
+		gameData.setProjectionMatrix(spriteBatch.getProjectionMatrix());
+		spriteBatch.begin();
 
 		// draw fishes
 		fishes.draw(spriteBatch);
@@ -218,9 +221,6 @@ public class GameScene implements IScene {
 	}
 
 	private void drawUI() {
-		// draw active buttons
-		activeGameButtons.draw(spriteBatch);
-
 		BitmapFontDrawer bfDrawer = gameManager.getBitmapFontDrawer();
 		String score = Integer.toString(gameManager.getCurrentScore());
 		GameManager.Status status = gameManager.getGameStatus();
@@ -262,6 +262,9 @@ public class GameScene implements IScene {
 			}
 		}
 		else {
+			// draw active buttons
+			activeGameButtons.draw(spriteBatch);
+
 			bfDrawer.begin()
 					.setScale(1.0f)
 					.setColor(Color.WHITE)

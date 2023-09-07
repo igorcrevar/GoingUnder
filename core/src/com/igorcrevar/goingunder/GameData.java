@@ -7,8 +7,6 @@ import com.igorcrevar.goingunder.statemachine.IMyRandom;
 
 public class GameData {
 	private static final float CameraHalfWidthValue = 2.9f;
-	private static final float CameraHalfHeightValue;
-	public static float AspectRatio;
 	
 	// begin level dependant
 	public float BoundariesBouncingFactor;
@@ -32,7 +30,7 @@ public class GameData {
 	
 	public float CameraDist;
 	public float CameraHalfWidth;
-	public float CameraHalfHeight;	
+	public float CameraHalfHeight;
 	
 	public boolean DieOnCollision = true;
 	public boolean DrawCollision = false;
@@ -42,62 +40,47 @@ public class GameData {
 	public float BubbleSpeedYPotential;
 	public float BubbleSize = 0.15f;
 	
-	private int level = 0; // goes from 0...n - 1
+	private int levelIdx = 0; // goes from 0...n - 1
 	private AGameLevel[] levels;
-	private AGameLevel currentGameLevel;
-	
-	public void init(IMyRandom myRandom) {
-		CameraYPosition = 0.0f;
-		setCurrentGameLevel(0, myRandom);
-	}
-	
-	public void update(int score, IMyRandom myRandom) {
-		// next level if current one is on his end
-		if (currentGameLevel.isEndOfLevel(score)) {
-			setCurrentGameLevel(this.level + 1, myRandom);
-		}
-	}
-	
-	private void setCurrentGameLevel(int newLevel, IMyRandom myRandom) {
-		this.level = newLevel;
-		this.currentGameLevel = this.levels[this.level];
-		this.currentGameLevel.copyTo(this);
-		myRandom.setGenerator(this.currentGameLevel.getGeneratorStateMachine());
-	}
-	
-	static {
-		// init world height		
+
+	public GameData(float cameraDist, AGameLevel[] levels) {
+		// init world height
 		float height = Gdx.graphics.getHeight();
 		float width = Gdx.graphics.getWidth();
 		if (Math.abs(width) < 5.0f || Math.abs(height) < 5.0f) {
 			width = 480.0f;
 			height = 800.0f;
 		}
-		
-		AspectRatio = height / width;
-		CameraHalfHeightValue = AspectRatio * CameraHalfWidthValue;
-	}
-	
-	public static GameData createDefault(GameManager gameManager) {
-		GameData playerData = new GameData();
-		playerData.CameraDist = 2.8f;
-		playerData.CameraHalfHeight = CameraHalfHeightValue;
-		playerData.CameraHalfWidth = CameraHalfWidthValue;
-		playerData.levels = GameDataLevelFactory.createLevels(gameManager);
 
-		return playerData;
+		this.CameraDist = cameraDist;
+		this.CameraHalfWidth = CameraHalfWidthValue;
+		this.CameraHalfHeight = height / width * CameraHalfWidthValue;
+		this.levels = levels;
+		this.levels[0].copyTo(this);
 	}
 	
-	public static GameData createForIntro() {
-		GameData playerData = new GameData();
-		playerData.Friction = 3.5f;
-		playerData.VelocityX = 2.4f;
-		playerData.VelocityY = -2.4f;
-		playerData.CameraDist = 0.4f;
-		playerData.CameraHalfHeight = CameraHalfHeightValue;
-		playerData.CameraHalfWidth = CameraHalfWidthValue;
-		
-		return playerData;
+	public void init(IMyRandom myRandom) {
+		this.CameraYPosition = 0.0f;
+		this.levelIdx = 0;
+		this.levels[0].copyTo(this);
+		myRandom.setGenerator(this.levels[0].getGeneratorStateMachine());
+	}
+	
+	public void update(int score, IMyRandom myRandom) {
+		// got to the next level if current one is on its end
+		if (this.levels[this.levelIdx].isEndOfLevel(score) && this.levelIdx + 1 < this.levels.length) {
+			this.levelIdx++;
+			this.levels[this.levelIdx].copyTo(this);
+			myRandom.setGenerator(this.levels[this.levelIdx].getGeneratorStateMachine());
+		}
+	}
+
+	public static GameData createDefault(GameManager gameManager) {
+		return new GameData(2.8f, GameDataLevelFactory.createLevels(gameManager));
+	}
+	
+	public static GameData createForIntro(GameManager gameManager) {
+		return new GameData(0.4f, GameDataLevelFactory.createDefaultLevel(gameManager));
 	}
 	
 	public float getCameraTop() {
@@ -125,6 +108,6 @@ public class GameData {
 	}
 
 	public AGameLevel getLevel() {
-		return currentGameLevel;
+		return this.levels[this.levelIdx];
 	}
 }

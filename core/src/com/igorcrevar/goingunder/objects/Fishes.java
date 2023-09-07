@@ -1,22 +1,17 @@
 package com.igorcrevar.goingunder.objects;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.igorcrevar.goingunder.GameData;
 import com.igorcrevar.goingunder.GameManager;
 import com.igorcrevar.goingunder.utils.Mathf;
 
 public class Fishes implements IGameObject {
+    private final static float FishSizeX = 0.7f;
     private final static int MaxFishes = 6;
 
     private class Fish {
-        private final static float FishSizeX = 0.7f;
-
         private final Sprite gameObject = new Sprite();
 
         private float speed;
@@ -41,10 +36,10 @@ public class Fishes implements IGameObject {
             // if upper part then go downwards. bottom part has more chances to go upwards
             if (bottomFish) {
                 this.startY = (float)(-gameData.CameraHalfHeight * Math.random());
-                this.endY = this.startY + (float)(Math.random() * gd.CameraHalfHeight * 0.9) - 0.2f * gd.CameraHalfHeight; 
+                this.endY = this.startY + (float)(Math.random() * gd.CameraHalfHeight * 0.75) - 0.15f * gd.CameraHalfHeight;
             } else {
                 this.startY = (float)(gameData.CameraHalfHeight * 0.6f * Math.random());
-                this.endY = this.startY - (float)(Math.random() * gd.CameraHalfHeight * 0.6);
+                this.endY = this.startY - (float)(Math.random() * gd.CameraHalfHeight * 0.55);
             }
 
             this.startY += gd.getCameraYCenter(); // inc for camera position
@@ -68,14 +63,14 @@ public class Fishes implements IGameObject {
             this.dirChanged = false;
         }
 
-        public boolean isPlayerHit(float playerX, float playerY, float playerSize, float time) {
+        public boolean isPlayerHit(float playerX, float playerY, float dist, float time) {
             float realTime = (time - startTime) * speed;
             float xDiff = gameObject.getX() + gameObject.getWidth()/2f - playerX;
             float yDiff = gameObject.getY() + gameObject.getHeight()/2f - playerY;
             float playerDist = xDiff*xDiff + yDiff*yDiff;
             
             // turn if near player!
-            if (playerDist < playerSize && !dirChanged) {
+            if (playerDist < dist && !dirChanged) {
                 this.dirChanged = true;
                 this.speed = this.speed * 1.2f / realTime;
                 this.endX = this.startX;
@@ -156,6 +151,7 @@ public class Fishes implements IGameObject {
     @Override
     public void update(float deltaTime) {
         final Player player = this.gameManager.getPlayer();
+        final float dist = gameData.PlayerSizeX / 2.0f + FishSizeX / 2.0f;
         this.animationTimer += deltaTime;
 
         for (int i = 0; i < this.aliveFishes; i++) {
@@ -165,19 +161,17 @@ public class Fishes implements IGameObject {
                 this.aliveFishes--;
                 this.fishes[i] = this.fishes[this.aliveFishes];
                 this.fishes[this.aliveFishes] = fish;
-            } else if (fish.isPlayerHit(player.getX(), player.getY(), gameData.PlayerSizeX, animationTimer) &&
+            } else if (fish.isPlayerHit(player.getX(), player.getY(), dist, animationTimer) &&
                 this.gameManager.isGameActive()) {
                 this.gameManager.incFishPunchCount();
                 this.gameManager.playPunchSound();
             }
         }
 
-        if (this.aliveFishes < MaxFishes && isEnabled) {
-            // randomly generate fish
-            if (Math.random() < gameData.FishRandomProbability) {
-                this.fishes[this.aliveFishes].set(gameData, animation, animationTimer);
-                this.aliveFishes++;
-            }
+        // randomly generate fish
+        if (this.aliveFishes < MaxFishes && isEnabled && Math.random() < gameData.FishRandomProbability) {
+            this.fishes[this.aliveFishes].set(gameData, animation, animationTimer);
+            this.aliveFishes++;
         }
     }
 

@@ -2,8 +2,10 @@ package com.igorcrevar.goingunder.objects;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.igorcrevar.goingunder.GameManager;
+import com.igorcrevar.goingunder.utils.GameHelper;
 
 public class ActiveGameButtons extends GameButtons {
+	private final static int ExtraSize = 200;
 	private final GameManager gameManager;
 
 	public ActiveGameButtons(final GameManager gameManager) {
@@ -25,6 +27,19 @@ public class ActiveGameButtons extends GameButtons {
 					default:
 						return false;
 				}
+			}
+
+			@Override
+			public boolean check(float x, float y) {
+				final float scWidth = ActiveGameButtons.this.width;
+				final float scHeight = ActiveGameButtons.this.height;
+				if (!isEnabled || !GameHelper.tapPointInsideRectangle(
+					x, y, 
+					0, scHeight, sprite.getWidth() + ExtraSize, sprite.getHeight() + ExtraSize)) {
+					return false;
+				}
+
+				return this.onClick();
 			}
 		});
 	}

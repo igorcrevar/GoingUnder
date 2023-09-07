@@ -1,5 +1,6 @@
 package com.igorcrevar.goingunder;
 
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.igorcrevar.goingunder.statemachine.GeneratorStateMachine;
 import com.igorcrevar.goingunder.statemachine.IGeneratorStateMachine;
@@ -8,29 +9,29 @@ public class GameDataLevelFactory {
 	
 	private static class GameLevel0 extends GameLevel1 {
 		public GameLevel0(GameManager gameManager) {
-			super(gameManager);
+			super();
 			velocityY = -1.6f;
 			friction = 3.5f;
 			emptySpaceSizeInTheMiddle = 1.52f;
 			emptySpaceSizeOnTheEnd = 1.48f;
 			endOnScore = 2;
 			fishRandomProbability = 0.0f;
-		}
-
-		@Override
-		protected AtlasRegion[] getTextures(GameManager gameManager) {
-			return new AtlasRegion[] {
+			textures = new AtlasRegion[] {
 				gameManager.getTextureAtlas("game").findRegion("ob10_left"),
 				gameManager.getTextureAtlas("game").findRegion("ob10_middle"),
 				gameManager.getTextureAtlas("game").findRegion("ob10_right"),
+			};
+			colors = new Vector3[] {
+				new Vector3(1f/255f, 68f/255f, 210f/255f), new Vector3(0f, 151f/255f, 255f/255f)
 			};
 		}
 	}
 	
 	private static class GameLevel1 extends AGameLevel {
-		protected final AtlasRegion[] textures;
-		
-		public GameLevel1(GameManager gameManager) {
+		protected AtlasRegion[] textures;
+		protected Vector3[] colors;
+
+		protected GameLevel1() {
 			friction = 3.5f;
 			velocityX = 1.8f;
 			velocityY = -2.05f;
@@ -40,7 +41,19 @@ public class GameDataLevelFactory {
 			emptySpaceSizeOnTheEnd = 1.28f;
 			boundariesBouncingFactor = 0.5f;
 			endOnScore = 10;
-			textures = getTextures(gameManager);
+			colors = new Vector3[] {
+				new Vector3(1f/255f, 58f/255f, 190f/255f), new Vector3(0f, 131f/255f, 235f/255f)
+			};
+		}
+		
+		public GameLevel1(GameManager gameManager) {
+			this();
+			fishRandomProbability = 0.0005f;
+			textures = new AtlasRegion[] {
+				gameManager.getTextureAtlas("game").findRegion("ob1_left"),
+				gameManager.getTextureAtlas("game").findRegion("ob1_middle"),
+				gameManager.getTextureAtlas("game").findRegion("ob1_right"),
+			};
 		}
 
 		@Override
@@ -63,36 +76,39 @@ public class GameDataLevelFactory {
 			return 0.3f;
 		}
 
-		protected AtlasRegion[] getTextures(GameManager gameManager) {
-			return new AtlasRegion[] {
-				gameManager.getTextureAtlas("game").findRegion("ob1_left"),
-				gameManager.getTextureAtlas("game").findRegion("ob1_middle"),
-				gameManager.getTextureAtlas("game").findRegion("ob1_right"),
-			};
+		@Override
+		public Vector3 getTopColor() {
+			return colors[0];
+		}
+
+		@Override
+		public Vector3 getBottomColor() {
+			return colors[1];
 		}
 	}
 
 	private static class GameLevel11 extends GameLevel1 {
 		public GameLevel11(GameManager gameManager) {
-			super(gameManager);
+			super();
 			velocityY = -2.35f;
 			emptySpaceSizeInTheMiddle = 1.22f;
 			emptySpaceSizeOnTheEnd = 1.16f;
 			endOnScore = 30;
-		}
-
-		@Override
-		protected AtlasRegion[] getTextures(GameManager gameManager) {
-			return new AtlasRegion[] {
+			fishRandomProbability = 0.001f;
+			textures = new AtlasRegion[] {
 				gameManager.getTextureAtlas("game").findRegion("ob11_left"),
 				gameManager.getTextureAtlas("game").findRegion("ob11_middle"),
 				gameManager.getTextureAtlas("game").findRegion("ob11_right"),
+			};
+			colors = new Vector3[] {
+				new Vector3(1f/255f, 68f/255f, 180f/255f), new Vector3(0f, 121f/255f, 225f/255f)
 			};
 		}
 	}
 	
 	private static class GameLevel2 extends AGameLevel {
 		private final AtlasRegion[] textures;
+		private final Vector3[] colors;
 		
 		public GameLevel2(GameManager gameManager) {
 			friction = 3.5f;
@@ -104,10 +120,14 @@ public class GameDataLevelFactory {
 			emptySpaceSizeOnTheEnd = 1.16f;
 			boundariesBouncingFactor = 0.5f;
 			endOnScore = 60;
+			fishRandomProbability = 0.0015f;
 			textures = new AtlasRegion[] {
 				gameManager.getTextureAtlas("game").findRegion("ob2_left"),
 				gameManager.getTextureAtlas("game").findRegion("ob2_middle"),
 				gameManager.getTextureAtlas("game").findRegion("ob2_right"),
+			};
+			colors = new Vector3[] {
+				new Vector3(1f/255f, 48f/255f, 160f/255f), new Vector3(0f, 81f/255f, 200f/255f)
 			};
 		}
 
@@ -130,10 +150,21 @@ public class GameDataLevelFactory {
 		public float getPartSize() {
 			return 0.6f;
 		}
+
+		@Override
+		public Vector3 getTopColor() {
+			return colors[0];
+		}
+
+		@Override
+		public Vector3 getBottomColor() {
+			return colors[1];
+		}
 	}
 	
 	private static class GameLevel3 extends AGameLevel {
 		private final AtlasRegion[] textures;
+		private final Vector3[] colors;
 
 		public GameLevel3(GameManager gameManager) {
 			friction = 3.5f;
@@ -145,10 +176,14 @@ public class GameDataLevelFactory {
 			emptySpaceSizeOnTheEnd = 1.16f;
 			boundariesBouncingFactor = 0.5f;
 			endOnScore = 90;
+			fishRandomProbability = 0.0025f;
 			textures = new AtlasRegion[] {
 				gameManager.getTextureAtlas("game").findRegion("ob3_left"),
 				gameManager.getTextureAtlas("game").findRegion("ob3_middle"),
 				gameManager.getTextureAtlas("game").findRegion("ob3_right"),
+			};
+			colors = new Vector3[] {
+				new Vector3(1f/255f, 38f/255f, 140f/255f), new Vector3(0f, 71f/255f, 180f/255f)
 			};
 		}
 
@@ -171,10 +206,21 @@ public class GameDataLevelFactory {
 		public float getPartSize() {
 			return 0.6f;
 		}
+
+		@Override
+		public Vector3 getTopColor() {
+			return colors[0];
+		}
+
+		@Override
+		public Vector3 getBottomColor() {
+			return colors[1];
+		}
 	}
 	
 	private static class GameLevel4 extends AGameLevel {
 		private final AtlasRegion[] textures;
+		private final Vector3[] colors;
 
 		public GameLevel4(GameManager gameManager) {
 			friction = 3.5f;
@@ -185,9 +231,13 @@ public class GameDataLevelFactory {
 			emptySpaceSizeInTheMiddle = 1.21f;
 			emptySpaceSizeOnTheEnd = 1.15f;
 			boundariesBouncingFactor = 0.4f;
+			fishRandomProbability = 0.0035f;
 			endOnScore = 120;
 			textures = new AtlasRegion[] {
 				gameManager.getTextureAtlas("game").findRegion("obstacle4"),
+			};
+			colors = new Vector3[] {
+				new Vector3(1f/255f, 20f/255f, 125f/255f), new Vector3(0f, 61f/255f, 165f/255f)
 			};
 		}
 
@@ -210,10 +260,21 @@ public class GameDataLevelFactory {
 		public float getPartSize() {
 			return 0.5f;
 		}
+
+		@Override
+		public Vector3 getTopColor() {
+			return colors[0];
+		}
+
+		@Override
+		public Vector3 getBottomColor() {
+			return colors[1];
+		}
 	}
 	
 	private static class GameLevel5 extends AGameLevel {
 		private final AtlasRegion[] textures;
+		private final Vector3[] colors;
 
 		public GameLevel5(GameManager gameManager) {
 			friction = 3.5f;
@@ -225,8 +286,12 @@ public class GameDataLevelFactory {
 			emptySpaceSizeOnTheEnd = 1.14f;
 			boundariesBouncingFactor = 0.4f;
 			endOnScore = 0;
+			fishRandomProbability = 0.0045f;
 			textures = new AtlasRegion[] {
 				gameManager.getTextureAtlas("game").findRegion("obstacle5"),
+			};
+			colors = new Vector3[] {
+				new Vector3(1f/255f, 1f/255f, 108f/255f), new Vector3(0f, 51f/255f, 148f/255f)
 			};
 		}
 
@@ -248,6 +313,16 @@ public class GameDataLevelFactory {
 		@Override
 		public float getPartSize() {
 			return 0.5f;
+		}
+
+		@Override
+		public Vector3 getTopColor() {
+			return colors[0];
+		}
+
+		@Override
+		public Vector3 getBottomColor() {
+			return colors[1];
 		}
 	}
 	
@@ -261,5 +336,9 @@ public class GameDataLevelFactory {
 			new GameLevel4(gameManager),
 			new GameLevel5(gameManager)
 		}; 
-	}	
+	}
+
+	public static AGameLevel[] createDefaultLevel(GameManager gameManager) {
+		return new AGameLevel[] { new GameLevel0(gameManager) };
+	}
 }

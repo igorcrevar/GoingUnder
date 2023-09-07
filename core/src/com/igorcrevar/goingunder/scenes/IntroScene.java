@@ -24,7 +24,7 @@ public class IntroScene implements IScene {
 	private static final float MaximumAnimTimerValue = 6.0f;
 
 	private IGameObject background;
-	private final GameData gameData = GameData.createForIntro();
+	private GameData gameData;
 	
 	private final SpriteBatch spriteBatch = new SpriteBatch();
 	
@@ -56,6 +56,7 @@ public class IntroScene implements IScene {
 	@Override
 	public void create(ISceneManager sceneManager) {
 		gameManager = sceneManager.getGameManager();
+		gameData = GameData.createForIntro(gameManager);
 
 		player = gameManager.getPlayer();
 		background = gameManager.getBackground();
@@ -134,12 +135,12 @@ public class IntroScene implements IScene {
 		animationTimer += deltaTime;
 		if (animationTimer >= MaximumAnimTimerValue) {
 			animationTimer = 0.0f;
-			hintType = rnd.nextInt(4);
+			hintType = (hintType + 1) % 4;
 		}
 		
+		background.draw(spriteBatch); // draw background
 		gameData.setProjectionMatrix(spriteBatch.getProjectionMatrix());
 		spriteBatch.begin();
-		background.draw(spriteBatch); // draw background
 		particles.draw(spriteBatch); // draw particles
 		player.draw(spriteBatch); // draw player
 		spriteBatch.end();

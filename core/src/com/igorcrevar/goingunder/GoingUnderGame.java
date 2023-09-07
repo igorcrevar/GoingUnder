@@ -121,10 +121,10 @@ public class GoingUnderGame extends ApplicationAdapter implements ISceneManager,
 	@Override
 	public boolean keyDown(int keycode) {
 		if (keycode == Input.Keys.Z) {
-			currentScene.processTouchDown(this, 0, 0);
+			currentScene.processTouchDown(this, 0, Gdx.graphics.getHeight());
 		}
 		else if (keycode == Input.Keys.X) {
-			currentScene.processTouchDown(this, Gdx.graphics.getWidth(), 0);
+			currentScene.processTouchDown(this, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		}
 		return true;
 	}
