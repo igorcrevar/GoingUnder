@@ -11,6 +11,7 @@ import com.igorcrevar.goingunder.scenes.IntroScene;
 import com.igorcrevar.goingunder.scenes.SceneConstants;
 import com.igorcrevar.goingunder.scenes.TutorialScene;
 import com.igorcrevar.goingunder.statemachine.MyRandom;
+import com.igorcrevar.goingunder.GameData;
 
 public class GoingUnderGame extends ApplicationAdapter implements ISceneManager, InputProcessor {
 	final int TutorialGamesCount = 4;
@@ -120,17 +121,13 @@ public class GoingUnderGame extends ApplicationAdapter implements ISceneManager,
 
 	@Override
 	public boolean keyDown(int keycode) {
-		if (keycode == Input.Keys.Z) {
-			currentScene.processTouchDown(this, 0, 0);
-		}
-		else if (keycode == Input.Keys.X) {
-			currentScene.processTouchDown(this, Gdx.graphics.getWidth(), 0);
-		}
+		GameData.setKey(keycode, true);
 		return true;
 	}
 
 	@Override
 	public boolean keyUp(int keycode) {
+		GameData.setKey(keycode, false);
 		if (keycode == Input.Keys.BACK || keycode == Input.Keys.ESCAPE) {
 			return currentScene.processBackKey(this);
 		}

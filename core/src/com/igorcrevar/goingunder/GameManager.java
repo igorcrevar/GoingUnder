@@ -1,5 +1,6 @@
 package com.igorcrevar.goingunder;
 
+import java.util.HashMap;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.igorcrevar.goingunder.objects.IGameObject;
 import com.igorcrevar.goingunder.objects.Player;
 import com.igorcrevar.goingunder.objects.StaticBackground;
@@ -40,6 +42,8 @@ public class GameManager {
 	
 	private IGameObject background;
 	private Player player;
+
+	private final HashMap<String, ShaderProgram> shaders = new HashMap<>();
 	
 	public GameManager() {
 		gameStatus = Status.NotActive;
@@ -54,13 +58,7 @@ public class GameManager {
 
 		// add all needed assets to queue
 		assetManager.load("fonts/arial64.fnt", BitmapFont.class);
-		assetManager.load("atlases/game.atlas", TextureAtlas.class);
-		assetManager.load("atlases/widgets.atlas", TextureAtlas.class);
-		assetManager.load("sounds/coin.wav", Sound.class);
-		assetManager.load("sounds/move.wav", Sound.class);
-		assetManager.load("sounds/move2.wav", Sound.class);
-		assetManager.load("sounds/die.wav", Sound.class);
-		assetManager.load("sounds/intro.ogg", Music.class);
+		assetManager.load("textures/background.png", Texture.class);
 	}
 	
 	public void setSoundOn(boolean value) {
@@ -164,7 +162,7 @@ public class GameManager {
 	}
 	
 	public TextureAtlas getTextureAtlas(String fileName) {
-		String fullName = "atlases/" + fileName + ".atlas";
+		String fullName = String.format("atlases/%s.atlas", fileName);
 		return assetManager.get(fullName, TextureAtlas.class);
 	}
 	
@@ -174,6 +172,26 @@ public class GameManager {
 	
 	public Sound getSound(String fileName) {
 		return assetManager.get("sounds/" + fileName, Sound.class);
+	}
+
+	public ShaderProgram getShaderProgram(String fileName) {
+		ShaderProgram.pedantic = false;
+		ShaderProgram sp = shaders.get(fileName);
+		if (sp != null) {
+			return sp;
+		}
+
+		sp = new ShaderProgram(
+			Gdx.files.internal(String.format("shaders/%s.vsh", fileName)),
+			Gdx.files.internal(String.format("shaders/%s.fsh", fileName)));
+		// check there's no shader compile errors
+		if (sp.isCompiled() == false) {
+			throw new IllegalStateException(sp.getLog());
+		}
+		
+		shaders.put(fileName, sp);
+
+		return sp;
 	}
 	
 	public void playIntroMusic() {

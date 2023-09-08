@@ -1,8 +1,10 @@
 package com.igorcrevar.goingunder;
 
+import java.util.HashSet;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
 import com.igorcrevar.goingunder.statemachine.IMyRandom;
 
 public class GameData {
@@ -44,7 +46,7 @@ public class GameData {
 	private int level = 0; // goes from 0...n - 1
 	private AGameLevel[] levels;
 	private AGameLevel currentGameLevel;
-	
+
 	public void init(IMyRandom myRandom) {
 		CameraYPosition = 0.0f;
 		setCurrentGameLevel(0, myRandom);
@@ -125,5 +127,63 @@ public class GameData {
 
 	public AGameLevel getLevel() {
 		return currentGameLevel;
+	}
+
+	// new game
+	private static HashSet<Integer> keys = new HashSet<Integer>();
+	
+	private Vector2 offset;
+
+	private float rotation;
+
+	private float zoomFactor;
+
+	public void incOffset(float x, float y) {
+		this.offset.x += x;
+		this.offset.y += y;
+	}
+
+	public void setOffset(Vector2 offset) {
+		this.offset = offset;
+	}
+
+	public Vector2 getOffset() {
+		return offset;
+	}
+
+	public void setRotation(float rotation) {
+		this.rotation = rotation;
+	}
+
+	public float getRotation() {
+		return rotation;
+	}
+
+	public void incRotation(float inc) {
+		this.rotation += inc;
+	}
+
+	public void incZoomFactor(float v) {
+		this.zoomFactor += v;
+	}
+
+	public void setZoomFactor(float v) {
+		this.zoomFactor = v;
+	}
+
+	public float getZoomFactor() {
+		return zoomFactor;
+	}
+
+	public static void setKey(int key, boolean pressed) {
+		if (pressed) {
+			GameData.keys.add(key);
+		} else {
+			GameData.keys.remove(key);
+		}
+	}
+
+	public static boolean isPressed(int key) {
+		return GameData.keys.contains(key);
 	}
 }
