@@ -11,20 +11,23 @@ const float TilesPerRow = TileTextureSize / TileSize; // 16
 uniform sampler2D u_texture_tile;
 uniform sampler2D u_texture_map;
 
+// a - horizontal direction x, b - horizontal direction y
+// c - vertical direction x, d - vertical direction y
+uniform vec4 u_abcd;
 uniform vec2 u_offset;
-uniform vec2 u_horizonat_inc;
-uniform vec2 u_vertical_inc;
-uniform vec2 u_screen_size;
-uniform float u_zoom_factor;
+uniform vec2 u_origin;
+uniform float u_scale;
 
 void main() {
-	vec2 rel_coord = gl_FragCoord.xy - u_screen_size * 0.5; // -sx/2, -sy/2
+	vec2 rel_coord = gl_FragCoord.xy - u_origin; // -sx/2, -sy/2
 	
+	vec2 rotated = vec2(
+		rel_coord.x * u_abcd[0] + rel_coord.y * u_abcd[2],
+		rel_coord.x * u_abcd[1] + rel_coord.y * u_abcd[3]
+	);
+
 	// absolute world coordinate
-	vec2 abs_coord = ((vec2(
-		(rel_coord.y * u_vertical_inc.x + rel_coord.x * u_horizonat_inc.x),
-		(rel_coord.y * u_vertical_inc.y + rel_coord.x * u_horizonat_inc.y)
-	)) * u_zoom_factor + u_offset) / TileSize;
+	vec2 abs_coord = (rotated * u_scale + u_offset) / TileSize;
 
 	vec2 tileUV = fract(abs_coord);
 	tileUV.y = 1.0 - tileUV.y;

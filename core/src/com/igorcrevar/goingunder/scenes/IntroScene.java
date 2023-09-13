@@ -43,7 +43,7 @@ public class IntroScene implements IScene {
 	@Override
 	public void init(ISceneManager sceneManager) {
 		gameData.setOffset(new Vector2(32*20f, 32*20f));
-		gameData.setZoomFactor(0.5f);
+		gameData.setZoomFactor(100f);
 		tileMesh.init();
 	}
 
@@ -55,9 +55,9 @@ public class IntroScene implements IScene {
 		tileMesh.draw();
 
 		if (GameData.isPressed(Input.Keys.A)) {
-			gameData.incRotation(-(float)(Math.PI / 5 * deltaTime));
-		} else if (GameData.isPressed(Input.Keys.D)) {
 			gameData.incRotation(+(float)(Math.PI / 5 * deltaTime));
+		} else if (GameData.isPressed(Input.Keys.D)) {
+			gameData.incRotation(-(float)(Math.PI / 5 * deltaTime));
 		}
 
 		if (GameData.isPressed(Input.Keys.W)) {
@@ -74,10 +74,10 @@ public class IntroScene implements IScene {
 			);
 		}
 
-		if (GameData.isPressed(Input.Keys.P)) {
-			gameData.incZoomFactor(-deltaTime * 0.2f);
-		} else if (GameData.isPressed(Input.Keys.L)) {
-			gameData.incZoomFactor(deltaTime * 0.2f);
+		if (GameData.isPressed(Input.Keys.P) && gameData.getZoomFactor() > 10f) {
+			gameData.incZoomFactor(-deltaTime * 20f);
+		} else if (GameData.isPressed(Input.Keys.L) && gameData.getZoomFactor() < 500f) {
+			gameData.incZoomFactor(deltaTime * 20f);
 		}
 	}
 

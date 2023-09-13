@@ -26,27 +26,31 @@ public class TileMesh {
 	private Texture texture;
 	private Texture mapTexture;
 
-	private float zoomFactor;
 	private final Vector2 offset = new Vector2();
-	private final Vector2 horizontalIncrement = new Vector2();
-	private final Vector2 verticalIncrement = new Vector2();
-
+	private final Matrix4 heightMatrix = new Matrix4();
+	private final Vector2 horizontalDir = new Vector2();
+	private final Vector2 verticalDir = new Vector2();
+	private float scale;
+	
 	public TileMesh(GameManager gameManager) {
-		sp = gameManager.getShaderProgram("background");
+		sp = gameManager.getShaderProgram("mode7");
 
 		texture = gameManager.getTexture("background.png");
 		mapTexture = createDummyMapTexture();
-		
+
+		final float w = Gdx.graphics.getWidth();
+		final float h = Gdx.graphics.getHeight();
+		final float floor_h = h / 2.0f;
 		mesh = new Mesh(true, 4, 6, new VertexAttribute(Usage.Position, 2, ShaderProgram.POSITION_ATTRIBUTE));
 		mesh.setIndices(new short[]{0, 1, 2, 2, 3, 0});
 		mesh.setVertices(new float[]{
-			-0.5f,  0.5f,
-			 0.5f,  0.5f,
-			 0.5f, -0.5f,
-			-0.5f, -0.5f, 
+			0, floor_h,
+			w, floor_h,
+			w, 0,
+			0, 0,
 		});
 
-		viewModelMatrix = new Matrix4().setToOrtho2D(-0.5f, -0.5f, 1f, 1f);
+		viewModelMatrix = new Matrix4().setToOrtho2D(0f, 0f, w, h);
 	}
 
 	public void init() {
@@ -55,14 +59,17 @@ public class TileMesh {
 	public void update(GameData gameData, float deltaTime) {
 		float rotation = gameData.getRotation();
 
-		horizontalIncrement.set((float)Math.cos(rotation), (float)Math.sin(rotation));
-		verticalIncrement.set((float)Math.cos(rotation + PI2), (float)Math.sin(rotation + PI2));
+		horizontalDir.set((float)Math.cos(rotation), (float)Math.sin(rotation));
+		verticalDir.set((float)Math.cos(rotation + PI2), (float)Math.sin(rotation + PI2));
 		offset.set(gameData.getOffset());
-
-		zoomFactor = gameData.getZoomFactor();
+		scale = gameData.getZoomFactor();
 	}
 
 	public void draw() {
+		final float w = Gdx.graphics.getWidth();
+		final float h = Gdx.graphics.getHeight();
+		final float floor_h = h / 2.0f;
+
 		Gdx.gl.glEnable(GL20.GL_TEXTURE_2D);
 		Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
 		Gdx.gl.glActiveTexture(GL20.GL_TEXTURE1);
@@ -73,14 +80,22 @@ public class TileMesh {
 		sp.bind();
 		sp.setUniformi("u_texture_tile", 0);
 		sp.setUniformi("u_texture_map", 1);
-		sp.setUniformf("u_zoom_factor", zoomFactor);
 		sp.setUniformf("u_offset", offset);
-		sp.setUniformf("u_horizonat_inc", horizontalIncrement);
-		sp.setUniformf("u_vertical_inc", verticalIncrement);
-		sp.setUniformf("u_screen_size", Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		sp.setUniformMatrix("u_projTrans", viewModelMatrix);
+		sp.setUniformf("u_abcd", horizontalDir.x, horizontalDir.y, verticalDir.x, verticalDir.y);
+		sp.setUniformf("u_origin", w / 2.0f, 0);
+		sp.setUniformf("u_screen_size", w, h * 2 / 3);
+		sp.setUniformf("u_scale", scale);
+		sp.setUniformMatrix("u_height", heightMatrix);
 
+		viewModelMatrix.idt().setToOrtho2D(0f, 0f, w, h);
+		sp.setUniformi("u_map_index", 0);
+		sp.setUniformMatrix("u_projTrans", viewModelMatrix);
 		mesh.render(sp, GL20.GL_TRIANGLES);
+
+		// viewModelMatrix.idt().setToOrtho2D(0f, 0f, w, h).translate(0.0f, h-floor_h, 0.0f);
+		// sp.setUniformi("u_map_index", 1);
+		// sp.setUniformMatrix("u_projTrans", viewModelMatrix);
+		// mesh.render(sp, GL20.GL_TRIANGLES);
 	}
 
 	public boolean isEnabled() {
