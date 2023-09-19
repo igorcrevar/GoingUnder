@@ -13,7 +13,7 @@ import com.igorcrevar.goingunder.scenes.TutorialScene;
 import com.igorcrevar.goingunder.statemachine.MyRandom;
 
 public class GoingUnderGame extends ApplicationAdapter implements ISceneManager, InputProcessor {
-	final int TutorialGamesCount = 4;
+	final int TutorialGamesCount = 3;
 	private IScene introScene;
 	private IScene gameScene;
 	private GameManager gameManager;

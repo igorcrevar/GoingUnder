@@ -91,7 +91,7 @@ public class IntroScene implements IScene {
 		titleAnimateTimer = 0.0f;
 		playerDir = 0;
 		scoreInfo = Integer.toString(gameManager.getTopScore());
-		hintType = rnd.nextInt(3);
+		hintType = rnd.nextInt(4);
 	}
 
 	@Override
@@ -134,7 +134,7 @@ public class IntroScene implements IScene {
 		animationTimer += deltaTime;
 		if (animationTimer >= MaximumAnimTimerValue) {
 			animationTimer = 0.0f;
-			hintType = rnd.nextInt(3);
+			hintType = rnd.nextInt(4);
 		}
 		
 		gameData.setProjectionMatrix(spriteBatch.getProjectionMatrix());
@@ -191,30 +191,35 @@ public class IntroScene implements IScene {
 	}
 	
 	private String getTutorialText() {
-		if (hintType == 0) {
+		switch (hintType) {
+		case 0:
 			if (animationTimer < MaximumAnimTimerValue / 2.0f) {
 				return "Multiple taps...";
 			}
 			return "...to accelerate more!";
-		}
-		else if (hintType == 1) {
+		case 1:
 			if (animationTimer < MaximumAnimTimerValue / 2.0f) {
 				return "It's easier to play...";
 			}
 			return "...with both thumbs!";
-		}
-		
-		if (animationTimer < MaximumAnimTimerValue / 4.0f) {
-			return "Tap left screen side...";
-		}
-		else if (animationTimer < MaximumAnimTimerValue / 2.0f) {
-			return "...to push our hero right!";
-			
-		}
-		else if (animationTimer < MaximumAnimTimerValue / 4.0f * 3.0f) {
-			return "Tap right screen side...";
-		}
+		case 2:
+			if (animationTimer < MaximumAnimTimerValue / 2.0f) {
+				return "Fish can't hurt you...";
+			}
+			return "...at all!";
+		default:
+			if (animationTimer < MaximumAnimTimerValue / 4.0f) {
+				return "Tap left screen side...";
+			}
+			else if (animationTimer < MaximumAnimTimerValue / 2.0f) {
+				return "...to push our hero right!";
+				
+			}
+			else if (animationTimer < MaximumAnimTimerValue / 4.0f * 3.0f) {
+				return "Tap right screen side...";
+			}
 
-		return "...to push our hero left!";
+			return "...to push our hero left!";
+		}
 	}
 }

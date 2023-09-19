@@ -104,6 +104,7 @@ public class GameScene implements IScene {
 		additionalTimer = 0.0f;
 		resumingCounter = 0.0f;
 		myRandom.reset();
+		gameManager.resetGame();
 		gameManager.setGameStatus(GameManager.Status.Active);
 		prevCameraYWhenObstacleIsGenerated = gameData.CameraYPosition + gameData.ObstacleGeneratorDistance;
 		
@@ -227,6 +228,8 @@ public class GameScene implements IScene {
 		if (status == GameManager.Status.NotActive) {
 			String best = Integer.toString(gameManager.getTopScore());
 			String timesPlayed = Integer.toString(gameManager.getTotalGamesPlayed());
+			String fishPunchCount = String.format("%d (%d)", 
+				gameManager.getFishPunchCount(), gameManager.getTopFishPunchCount());
 			float initialY = bfDrawer.getHeight() * 1.2f + 400;
 			float endY = bfDrawer.getHeight() * 0.44f + 400;
 			float gameOverYPos = Mathf.lerp(initialY, endY, additionalTimer / 2.5f);
@@ -239,12 +242,14 @@ public class GameScene implements IScene {
 			bfDrawer.begin()
 					.setScale(1.0f)
 					.setColor(Color.ORANGE)
-					.draw("Best", 300f, gameOverYPos - 350f)
-					.draw("Plays", 300f, gameOverYPos - 450f)
+					.draw("Best", 150f, gameOverYPos - 350f)
+					.draw("Plays", 150f, gameOverYPos - 450f)
+					.draw("Fish", 150f, gameOverYPos - 550f)
 					.setColor(Color.WHITE)
-					.draw(best, 300f, gameOverYPos - 350f, BitmapFontDrawer.Flag.AlignTopOrRight)
-					.draw(timesPlayed, 300f, gameOverYPos - 450f, BitmapFontDrawer.Flag.AlignTopOrRight)
-					.draw(score,  0.0f, bfDrawer.getHeight(), BitmapFontDrawer.Flag.Center, BitmapFontDrawer.Flag.Middle);
+					.draw(best, 150f, gameOverYPos - 350f, BitmapFontDrawer.Flag.AlignTopOrRight)
+					.draw(timesPlayed, 150f, gameOverYPos - 450f, BitmapFontDrawer.Flag.AlignTopOrRight)
+					.draw(fishPunchCount, 150f, gameOverYPos - 550f, BitmapFontDrawer.Flag.AlignTopOrRight)
+					.draw(score,  0.0f, bfDrawer.getHeight(), BitmapFontDrawer.Flag.Center, BitmapFontDrawer.Flag.Middle);					
 			if (gameData.DrawFPS) {
 				bfDrawer.draw("fps:" + Gdx.graphics.getFramesPerSecond(), 26f, 65f);
 			}

@@ -14,6 +14,7 @@ public class GameDataLevelFactory {
 			emptySpaceSizeInTheMiddle = 1.52f;
 			emptySpaceSizeOnTheEnd = 1.48f;
 			endOnScore = 2;
+			fishRandomProbability = 0.0f;
 		}
 
 		@Override

@@ -19,10 +19,11 @@ public class GameManager {
 	public enum Status {
 		Resuming, Paused, Active, NotActive
 	}
-	private final static float MusicVolume = 0.85f;
+	private final static float MusicVolume = 0.9f;
 	private final static int BitmapFontDrawerFakeXResolution = 1080;
 	private final static String GameSaves = "game_saves";
 	private final static String TopScore = "top_score";
+	private final static String TopFishPunchCount = "top_fish_punch_cnt";
 	private final static String SoundOn = "sound_on";
 	private final static String TotalGamesPlayed = "total_games_played";
 	private final static String TotalScoreSum = "total_score_sum";
@@ -31,6 +32,8 @@ public class GameManager {
 	private int currentScore;
 	private int topScore;
 	private boolean isSoundOn;
+	private int topFishPunchCount;
+	private int fishPunchCount;
 	private int totalScoreSum;
 	private int totalGamesPlayed;
 	private Status gameStatus;
@@ -43,11 +46,12 @@ public class GameManager {
 	
 	public GameManager() {
 		gameStatus = Status.NotActive;
-		topScore = 0;
 		currentScore = 0;
+		fishPunchCount = 0;
 		//load top score, etc
 		Preferences prefs = Gdx.app.getPreferences(GameSaves);
 		topScore = prefs.getInteger(TopScore);
+		topFishPunchCount = prefs.getInteger(TopFishPunchCount);
 		isSoundOn = prefs.getBoolean(SoundOn, true);
 		totalGamesPlayed = prefs.getInteger(TotalGamesPlayed, 0);
 		totalScoreSum = prefs.getInteger(TotalScoreSum, 0);
@@ -60,6 +64,7 @@ public class GameManager {
 		assetManager.load("sounds/move.wav", Sound.class);
 		assetManager.load("sounds/move2.wav", Sound.class);
 		assetManager.load("sounds/die.wav", Sound.class);
+		assetManager.load("sounds/punch.wav", Sound.class);
 		assetManager.load("sounds/intro.ogg", Music.class);
 	}
 	
@@ -79,9 +84,6 @@ public class GameManager {
 	
 	public void setGameStatus(Status status) {
 		gameStatus = status;
-		if (status == Status.Active) {
-			currentScore = 0;
-		}
 	}
 
 	public Status getGameStatus() {
@@ -107,8 +109,12 @@ public class GameManager {
 		// save top score
 		if (topScore < currentScore) {
 			topScore = currentScore;
-			// Save top score!!!!
-			prefs.putInteger(TopScore, topScore);
+			prefs.putInteger(TopScore, topScore); // Save top score!!!!
+		}
+
+		if (topFishPunchCount < fishPunchCount) {
+			topFishPunchCount = fishPunchCount;
+			prefs.putInteger(TopFishPunchCount, topFishPunchCount); // Save top fish punch count
 		}
 		
 		// hack / do not want to kill my ssd
@@ -130,12 +136,25 @@ public class GameManager {
 		playCoinSound();
 	}
 
+	public void incFishPunchCount() {
+		fishPunchCount++;
+	}
+
+	public void resetGame() {
+		currentScore = 0;
+		fishPunchCount = 0;
+	}
+
 	public int getCurrentScore() {
 		return currentScore;
 	}
 	
 	public int getTopScore() {
 		return topScore;
+	}
+
+	public int getTopFishPunchCount() {
+		return topFishPunchCount;
 	}
 	
 	public int getTotalScoreSum() {
@@ -144,6 +163,10 @@ public class GameManager {
 	
 	public int getTotalGamesPlayed() {
 		return totalGamesPlayed;
+	}
+
+	public int getFishPunchCount() {
+		return fishPunchCount;
 	}
 	
 	public boolean getIsSoundOn() {
@@ -193,6 +216,12 @@ public class GameManager {
 	public void playCoinSound() {
 		if (isSoundOn) {
 			getSound("coin.wav").play();
+		}
+	}
+
+	public void playPunchSound() {
+		if (isSoundOn) {
+			getSound("punch.wav").play();
 		}
 	}
 	

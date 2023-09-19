@@ -18,6 +18,7 @@ public class GameData {
 	public float EmptySpaceSizeOnTheEnd;
 	public float ObstacleGeneratorDistance;
 	public float Friction;
+	public float FishRandomProbability;
 	// end level dependant	
 	
 	public float RotationSpeed = 20.0f;

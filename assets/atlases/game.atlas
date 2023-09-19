@@ -187,7 +187,7 @@ ob2_right
   index: -1
 fish11
   rotate: false
-  xy: 384, 59
+  xy: 384, 60
   size: 108, 68
   orig: 108, 68
   offset: 0, 0
@@ -201,7 +201,7 @@ fish12
   index: -1
 fish13
   rotate: false
-  xy: 384, 199
+  xy: 384, 200
   size: 108, 68
   orig: 108, 68
   offset: 0, 0

@@ -5,6 +5,8 @@ import com.igorcrevar.goingunder.statemachine.IGeneratorStateMachine;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
 public abstract class AGameLevel {
+	private static final float DefaultFishRandomProbability = 0.006f;
+
 	// we use public fields instead to just make population of data for every level inside of abstract copyTo method
 	// because I need to change efficiently level data while test mechanic
 	public float boundariesBouncingFactor;	
@@ -16,6 +18,8 @@ public abstract class AGameLevel {
 	public float emptySpaceSizeInTheMiddle;
 	public float emptySpaceSizeOnTheEnd;
 	public int endOnScore;
+
+	public float fishRandomProbability = DefaultFishRandomProbability;
 
 	private IGeneratorStateMachine generatorStateMachine;
 	
@@ -36,6 +40,8 @@ public abstract class AGameLevel {
 		data.Friction = friction;
 		data.VelocityX = velocityX;
 		data.VelocityY = velocityY;
+
+		data.FishRandomProbability = fishRandomProbability;
 	}
 	
 	public IGeneratorStateMachine getGeneratorStateMachine() {
