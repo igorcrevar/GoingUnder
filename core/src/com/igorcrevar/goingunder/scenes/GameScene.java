@@ -228,16 +228,16 @@ public class GameScene implements IScene {
 		if (status == GameManager.Status.NotActive) {
 			String best = Integer.toString(gameManager.getTopScore());
 			String timesPlayed = Integer.toString(gameManager.getTotalGamesPlayed());
-			String fishPunchCount = String.format("%d (%d)", 
-				gameManager.getFishPunchCount(), gameManager.getTopFishPunchCount());
-			float initialY = bfDrawer.getHeight() * 1.2f + 400;
-			float endY = bfDrawer.getHeight() * 0.44f + 400;
-			float gameOverYPos = Mathf.lerp(initialY, endY, additionalTimer / 2.5f);
+			String fishPunchCount = String.format("%d (%d)",
+					gameManager.getFishPunchCount(), gameManager.getTopFishPunchCount());
+			float initialY = bfDrawer.getHeight() * 1.6f;
+			float endY = bfDrawer.getHeight() * 0.6f + gameOverDrawer.getHeight();
+			float gameOverYPos = Mathf.lerp(initialY, endY, additionalTimer / 3f);
 
-			gameOverDrawer.idt().translate(
-					(myFontDrawerBatch.getWidth() - gameOverDrawer.getWidth()) / 2f,
-					gameOverYPos);
+			gameOverDrawer.idt().translate(myFontDrawerBatch.getWidth() / 2f, gameOverYPos);
 			myFontDrawerBatch.draw();
+
+			gameOverYPos -= gameOverDrawer.getHeight() * 0.5f;
 
 			bfDrawer.begin()
 					.setScale(1.0f)

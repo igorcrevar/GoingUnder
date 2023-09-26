@@ -95,6 +95,8 @@ public class GoingUnderGame extends ApplicationAdapter implements ISceneManager,
 					currentScene.create(this);
 				}
 				break;
+			default:
+				return;
 		}
 
 		currentScene.init(this);

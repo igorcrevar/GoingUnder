@@ -46,6 +46,9 @@ public class MyFontDrawer implements Disposable {
 		short iIndex = 0;
 		float[] vertices = new float[vertexCount * 4];
 		short[] indices = new short[indicesCount];
+
+		final float halfWidth = this.width / 2.0f;
+		final float halfHeight = this.height / 2.0f;
 		
 		byte numberOfSpaces = 0;
 		for (int i = 0; i < txt.length(); ++i) {
@@ -71,6 +74,9 @@ public class MyFontDrawer implements Disposable {
 						if (row > 0) {
 							y -= (cellPadding + voxelHeight) * row;
 						}
+
+						x -= halfWidth;
+						y -= halfHeight;
 						
 						short vIndexReal = (short)(4 * vIndex);
 						vertices[vIndexReal++] = x;   
@@ -120,6 +126,11 @@ public class MyFontDrawer implements Disposable {
 
 	public MyFontDrawer rotateXYRad(float angle) {
 		viewModelMatrix.rotateRad(Vector3.Z, angle);
+		return this;
+	}
+
+	public MyFontDrawer scale(float scaleX, float scaleY, float scaleZ) {
+		viewModelMatrix.scale(scaleX, scaleY, scaleZ);
 		return this;
 	}
 

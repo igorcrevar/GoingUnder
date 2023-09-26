@@ -63,7 +63,7 @@ public class Fishes implements IGameObject {
             this.dirChanged = false;
         }
 
-        public boolean isPlayerHit(float playerX, float playerY, float dist, float time) {
+        public boolean isPlayerHit(float playerX, float playerY, float playerVelocity, float dist, float time) {
             float realTime = (time - startTime) * speed;
             float xDiff = gameObject.getX() + gameObject.getWidth()/2f - playerX;
             float yDiff = gameObject.getY() + gameObject.getHeight()/2f - playerY;
@@ -72,7 +72,7 @@ public class Fishes implements IGameObject {
             // turn if near player!
             if (playerDist < dist && !dirChanged) {
                 this.dirChanged = true;
-                this.speed = this.speed * 1.2f / realTime;
+                this.speed = this.speed * Math.max(playerVelocity, 1.2f) / realTime;
                 this.endX = this.startX;
                 this.endY = (this.endY - this.startY) * realTime + gameObject.getY();
                 this.startX = gameObject.getX();
@@ -151,6 +151,7 @@ public class Fishes implements IGameObject {
     @Override
     public void update(float deltaTime) {
         final Player player = this.gameManager.getPlayer();
+        final float playerVelocity = (Math.abs(player.getVelocityX()) / this.gameData.MaxVelocityX) * 2.5f;
         final float dist = gameData.PlayerSizeX / 2.0f + FishSizeX / 2.0f;
         this.animationTimer += deltaTime;
 
@@ -161,7 +162,7 @@ public class Fishes implements IGameObject {
                 this.aliveFishes--;
                 this.fishes[i] = this.fishes[this.aliveFishes];
                 this.fishes[this.aliveFishes] = fish;
-            } else if (fish.isPlayerHit(player.getX(), player.getY(), dist, animationTimer) &&
+            } else if (fish.isPlayerHit(player.getX(), player.getY(), playerVelocity, dist, animationTimer) &&
                 this.gameManager.isGameActive()) {
                 this.gameManager.incFishPunchCount();
                 this.gameManager.playPunchSound();

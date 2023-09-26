@@ -172,9 +172,7 @@ public class Player implements IGameObject {
 	}
 	
 	public float getAngle() {
-		float finalAngle = rotationAngle > InitialAngle 
-			 			   ? rotationAngle - InitialAngle : rotationAngle + (360.0f - InitialAngle);
-		return finalAngle;
+		return rotationAngle > InitialAngle ? rotationAngle - InitialAngle : rotationAngle + (360.0f - InitialAngle);
 	}
 	
 	public float getX() {
@@ -183,6 +181,10 @@ public class Player implements IGameObject {
 	
 	public float getY() {
 		return gameObject.getY() + gameData.PlayerSizeY / 2.0f;
+	}
+
+	public float getVelocityX() {
+		return this.velocityX;
 	}
 	
 	private void updateAnimation(TextureRegion[] textures, float deltaTime) {

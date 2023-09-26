@@ -2,12 +2,12 @@ android {
     namespace "com.igorcrevar.goingunder"
     defaultConfig {
         applicationId "com.igorcrevar.goingunder.android"
-        minSdkVersion 14
+        minSdkVersion 19
         targetSdkVersion 34
         compileSdk 34
         buildToolsVersion = "34.0.0"
-        versionCode 23
-        versionName "1.0.18"
+        versionCode 36
+        versionName "1.0.20"
     }
     sourceSets {
         main {

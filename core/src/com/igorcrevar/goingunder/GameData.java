@@ -1,7 +1,6 @@
 package com.igorcrevar.goingunder;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Matrix4;
 import com.igorcrevar.goingunder.statemachine.IMyRandom;
 
@@ -21,7 +20,7 @@ public class GameData {
 	
 	public float RotationSpeed = 20.0f;
 	public float RotationMaxAngle = 10.0f;
-	public float ObstacleScaleY = 0.5f;;
+	public float ObstacleScaleY = 0.5f;
 	public int MaxOnScreenAtOnce = 4;
 	public float MaxVelocityX = 8.0f;
 	public float CameraYPosition = 0.0f;
@@ -41,7 +40,7 @@ public class GameData {
 	public float BubbleSize = 0.15f;
 	
 	private int levelIdx = 0; // goes from 0...n - 1
-	private AGameLevel[] levels;
+	private final AGameLevel[] levels;
 
 	public GameData(float cameraDist, AGameLevel[] levels) {
 		// init world height

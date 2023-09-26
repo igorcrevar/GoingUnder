@@ -22,7 +22,7 @@ public class GameDataLevelFactory {
 				gameManager.getTextureAtlas("game").findRegion("ob10_right"),
 			};
 			colors = new Vector3[] {
-				new Vector3(1f/255f, 68f/255f, 210f/255f), new Vector3(0f, 151f/255f, 255f/255f)
+				new Vector3(1f/255f, 68f/255f, 210f/255f), new Vector3(0f, 151f/255f, 1f)
 			};
 		}
 	}
@@ -42,13 +42,13 @@ public class GameDataLevelFactory {
 			boundariesBouncingFactor = 0.5f;
 			endOnScore = 10;
 			colors = new Vector3[] {
-				new Vector3(1f/255f, 58f/255f, 190f/255f), new Vector3(0f, 131f/255f, 235f/255f)
+				new Vector3(1f/255f, 58f/255f, 200f/255f), new Vector3(0f, 131f/255f, 245f/255f)
 			};
 		}
 		
 		public GameLevel1(GameManager gameManager) {
 			this();
-			fishRandomProbability = 0.0005f;
+			fishRandomProbability = 0.0003f;
 			textures = new AtlasRegion[] {
 				gameManager.getTextureAtlas("game").findRegion("ob1_left"),
 				gameManager.getTextureAtlas("game").findRegion("ob1_middle"),
@@ -101,7 +101,7 @@ public class GameDataLevelFactory {
 				gameManager.getTextureAtlas("game").findRegion("ob11_right"),
 			};
 			colors = new Vector3[] {
-				new Vector3(1f/255f, 68f/255f, 180f/255f), new Vector3(0f, 121f/255f, 225f/255f)
+				new Vector3(1f/255f, 68f/255f, 190f/255f), new Vector3(0f, 121f/255f, 235f/255f)
 			};
 		}
 	}
@@ -127,7 +127,7 @@ public class GameDataLevelFactory {
 				gameManager.getTextureAtlas("game").findRegion("ob2_right"),
 			};
 			colors = new Vector3[] {
-				new Vector3(1f/255f, 48f/255f, 160f/255f), new Vector3(0f, 81f/255f, 200f/255f)
+				new Vector3(1f/255f, 48f/255f, 180f/255f), new Vector3(0f, 81f/255f, 225f/255f)
 			};
 		}
 
@@ -183,7 +183,7 @@ public class GameDataLevelFactory {
 				gameManager.getTextureAtlas("game").findRegion("ob3_right"),
 			};
 			colors = new Vector3[] {
-				new Vector3(1f/255f, 38f/255f, 140f/255f), new Vector3(0f, 71f/255f, 180f/255f)
+				new Vector3(1f/255f, 38f/255f, 170f/255f), new Vector3(0f, 71f/255f, 215f/255f)
 			};
 		}
 
@@ -237,7 +237,7 @@ public class GameDataLevelFactory {
 				gameManager.getTextureAtlas("game").findRegion("obstacle4"),
 			};
 			colors = new Vector3[] {
-				new Vector3(1f/255f, 20f/255f, 125f/255f), new Vector3(0f, 61f/255f, 165f/255f)
+				new Vector3(1f/255f, 20f/255f, 155f/255f), new Vector3(0f, 61f/255f, 195f/255f)
 			};
 		}
 
@@ -291,7 +291,7 @@ public class GameDataLevelFactory {
 				gameManager.getTextureAtlas("game").findRegion("obstacle5"),
 			};
 			colors = new Vector3[] {
-				new Vector3(1f/255f, 1f/255f, 108f/255f), new Vector3(0f, 51f/255f, 148f/255f)
+				new Vector3(1f/255f, 1f/255f, 135f/255f), new Vector3(0f, 51f/255f, 180f/255f)
 			};
 		}
 

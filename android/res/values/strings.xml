@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Going Under</string>
-    <string name="app_id" translatable="false">343092932686</string>
-    <string name="gamehelper_sign_in_failed" translatable="false">Failed to sign in. Please check your network connection and try again.</string>
-    <string name="gamehelper_app_misconfigured" translatable="false">The application is incorrectly configured. Check that the package name and signing certificate match the client ID created in Developer Console. Also, if the application is not yet published, check that the account you are trying to sign in with is listed as a tester account. See logs for more information.</string>
-    <string name="gamehelper_license_failed" translatable="false">License check failed.</string>
-    <string name="gamehelper_unknown_error" translatable="false">Unknown error.</string>
+    <string translatable="false" name="game_services_project_id">343092932686</string>
     <string name="achievement_gamer_wanna_be" translatable="false">CgkIzuC6j_4JEAIQAg</string>
     <string name="achievement_things_getting_better" translatable="false">CgkIzuC6j_4JEAIQBA</string>
     <string name="achievement_persistence_is_key" translatable="false">CgkIzuC6j_4JEAIQAQ</string>

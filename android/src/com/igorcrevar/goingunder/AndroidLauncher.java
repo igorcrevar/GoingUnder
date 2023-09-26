@@ -8,16 +8,22 @@ import android.util.Log;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.games.AchievementsClient;
-import com.google.android.gms.games.Games;
 import com.google.android.gms.games.LeaderboardsClient;
+import com.google.android.gms.games.PlayGames;
+import com.google.android.gms.games.PlayGamesSdk;
 
 public class AndroidLauncher extends AndroidApplication {
-	private AchievementsClient achievementClient;
+	public interface Callable {
+		void execute();
+	}
+
+	private static final int RC_ACHIEVEMENT_UI = 0x666; // 9003;
+	private static final int RC_LEADERBOARD_UI = 0x777;
+
 	private LeaderboardsClient leaderboardsClient;
+
+	private  AchievementsClient achievementClient;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
@@ -29,7 +35,6 @@ public class AndroidLauncher extends AndroidApplication {
 
 			@Override
 			public void showAds(boolean show) {
-
 			}
 
 			@Override
@@ -92,47 +97,54 @@ public class AndroidLauncher extends AndroidApplication {
 
 			@Override
 			public void showAchievements() {
-				if (achievementClient != null) {
-					achievementClient.getAchievementsIntent().addOnSuccessListener(
-							intent -> startActivityForResult(intent, 0x666)
-					);
+				if (achievementClient == null) {
+					AndroidLauncher.this.trySignInGps(() ->
+						achievementClient.getAchievementsIntent()
+								.addOnSuccessListener(intent -> startActivityForResult(intent, RC_ACHIEVEMENT_UI)));
 				} else {
-					showErrorDialog(getString(R.string.gps_info));
+					achievementClient.getAchievementsIntent()
+							.addOnSuccessListener(intent -> startActivityForResult(intent, RC_ACHIEVEMENT_UI));
 				}
 			}
 
 			@Override
 			public void showLeaderboards() {
-				if (leaderboardsClient != null) {
-					String ln = getString(R.string.leaderboard_high_score);
-					leaderboardsClient.getLeaderboardIntent(ln).addOnSuccessListener(
-							intent -> startActivityForResult(intent,  0x777)
-					);
+				final String ln = getString(R.string.leaderboard_high_score);
+
+				if (leaderboardsClient == null) {
+					AndroidLauncher.this.trySignInGps(() ->
+						leaderboardsClient.getLeaderboardIntent(ln)
+								.addOnSuccessListener(intent -> startActivityForResult(intent, RC_LEADERBOARD_UI)));
 				} else {
-					showErrorDialog(getString(R.string.gps_info));
+					leaderboardsClient.getLeaderboardIntent(ln)
+							.addOnSuccessListener(intent -> startActivityForResult(intent, RC_LEADERBOARD_UI));
 				}
 			}
 		}), config);
 	}
 
 	private void initGps() {
-		GoogleSignInOptions opt = new GoogleSignInOptions.Builder(
-				GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN
-		).build();
-		GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, opt);
+		PlayGamesSdk.initialize(this);
+		PlayGames.getGamesSignInClient(this).isAuthenticated().addOnCompleteListener(authTask -> {
+			// if already authenticated -> pick clients...
+			if (authTask.isSuccessful() && authTask.getResult().isAuthenticated()) {
+				achievementClient = PlayGames.getAchievementsClient(this);
+				leaderboardsClient = PlayGames.getLeaderboardsClient(this);
+			}
+		});
+	}
 
-		googleSignInClient.silentSignIn().addOnCompleteListener(
-				task -> {
-					if (task.isSuccessful()) {
-						achievementClient = Games.getAchievementsClient(
-								this, task.getResult());
-						leaderboardsClient = Games.getLeaderboardsClient(
-								this, task.getResult());
-					} else {
-						Log.e("Error", "signInError", task.getException());
-					}
-				}
-		);
+	private void trySignInGps(Callable callback) {
+		PlayGames.getGamesSignInClient(this).signIn().addOnCompleteListener(task -> {
+			if (task.isSuccessful() && task.getResult().isAuthenticated()) {
+				achievementClient = PlayGames.getAchievementsClient(this);
+				leaderboardsClient = PlayGames.getLeaderboardsClient(this);
+				callback.execute();
+			} else {
+				showErrorDialog(getString(R.string.gps_info));
+				Log.e("going_under", "can not log into google play", task.getException());
+			}
+		});
 	}
 
 	private void showErrorDialog(String message) {

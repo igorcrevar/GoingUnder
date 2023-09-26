@@ -11,6 +11,7 @@
     <application
         android:allowBackup="true"
         android:fullBackupContent="true"
+        android:dataExtractionRules="@xml/backup_rules"
         android:icon="@drawable/ic_goingunder"
         android:isGame="true"
         android:appCategory="game"
@@ -19,7 +20,6 @@
         tools:ignore="UnusedAttribute">
         <activity
             android:name="com.igorcrevar.goingunder.AndroidLauncher"
-            android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|screenLayout"
             android:exported="true">
@@ -30,10 +30,7 @@
         </activity>
 
         <meta-data android:name="com.google.android.gms.games.APP_ID"
-            android:value="@string/app_id" />
-
-        <meta-data android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+            android:value="@string/game_services_project_id"/>
     </application>
 
 </manifest>

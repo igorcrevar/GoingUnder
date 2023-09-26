@@ -74,8 +74,8 @@ public class IntroScene implements IScene {
 				gameManager.getTextureAtlas("game").findRegion("titlebubble"),
 				 8, 8, 4, 0.00001f);
 		copyright.idt().translate(
-				(myFontDrawerBatch.getWidth() - copyright.getWidth()) / 2.0f,
-				95f);
+				myFontDrawerBatch.getWidth() / 2.0f,
+				140f);
 		
 		introButtons = new IntroSceneButtons(sceneManager, activityRequestHandler, gameManager);
 	}
@@ -108,14 +108,21 @@ public class IntroScene implements IScene {
 		float titleAngle = Mathf.lerpBI(-0.1f, 0.2f,
 				titleAnimateTimer / (float)Math.PI / 2);
 
+		final float h1 = titleDrawers[0].getHeight();
+		final float h2 = titleDrawers[1].getHeight();
+
+		final float scale = (float)(0.9 + Math.sin(titleAnimateTimer) * 0.1);
+
 		titleDrawers[0].idt()
-				.translate(titleX + (myFontDrawerBatch.getWidth() - titleDrawers[0].getWidth()) / 2.0f,
-						titleY + myFontDrawerBatch.getHeight() - 200f)
-				.rotateXYRad(titleAngle);
+				.translate(titleX + myFontDrawerBatch.getWidth() / 2.0f,
+						titleY + myFontDrawerBatch.getHeight() - h1 / 2.0f - 20.0f)
+				.rotateXYRad(titleAngle)
+				.scale(scale, scale, scale);
 		titleDrawers[1].idt()
-				.translate(titleX + (myFontDrawerBatch.getWidth() - titleDrawers[1].getWidth()) / 2.0f,
-						titleY + myFontDrawerBatch.getHeight() - 450f)
-				.rotateXYRad(titleAngle);
+				.translate(titleX + myFontDrawerBatch.getWidth() / 2.0f,
+						titleY + myFontDrawerBatch.getHeight() - h1 - h2 / 2.0f - 20.0f)
+				.rotateXYRad(titleAngle)
+				.scale(scale, scale, scale);
 		titleAnimateTimer = (titleAnimateTimer + deltaTime * titleSpeedFactor) % ((float)Math.PI * 2);
 	
 		background.update(deltaTime);

@@ -1,7 +1,6 @@
 package com.igorcrevar.goingunder;
 
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.igorcrevar.goingunder.statemachine.IGeneratorStateMachine;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 
