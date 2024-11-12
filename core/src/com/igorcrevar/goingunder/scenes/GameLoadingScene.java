@@ -11,18 +11,18 @@ import com.igorcrevar.goingunder.utils.GameHelper;
 public class GameLoadingScene implements IScene {
 	private final SpriteBatch spriteBatch;
 	private boolean isDisposed;
-	
-	private IActivityRequestHandler activityRequestHandler;
-	
+
+	private final IActivityRequestHandler activityRequestHandler;
+
 	public GameLoadingScene(IActivityRequestHandler activityRequestHandler) {
 		this.spriteBatch = new SpriteBatch();
 		this.activityRequestHandler = activityRequestHandler;
 	}
-	
+
 	@Override
 	public void create(ISceneManager sceneManager) {
 	}
-	
+
 	@Override
 	public void init(ISceneManager sceneManager) {
 		activityRequestHandler.showAds(true);

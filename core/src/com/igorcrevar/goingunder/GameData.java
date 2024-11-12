@@ -6,7 +6,7 @@ import com.igorcrevar.goingunder.statemachine.IMyRandom;
 
 public class GameData {
 	private static final float CameraHalfWidthValue = 2.9f;
-	
+
 	// begin level dependant
 	public float BoundariesBouncingFactor;
 	public float VelocityY;
@@ -17,7 +17,7 @@ public class GameData {
 	public float Friction;
 	public float FishRandomProbability;
 	// end level dependant	
-	
+
 	public float RotationSpeed = 20.0f;
 	public float RotationMaxAngle = 10.0f;
 	public float ObstacleScaleY = 0.5f;
@@ -26,19 +26,19 @@ public class GameData {
 	public float CameraYPosition = 0.0f;
 	public float PlayerSizeX = 1.0f;
 	public float PlayerSizeY = 1.0f;
-	
+
 	public float CameraDist;
 	public float CameraHalfWidth;
 	public float CameraHalfHeight;
-	
+
 	public boolean DieOnCollision = true;
 	public boolean DrawCollision = false;
 	public boolean DrawFPS = false;
-	
+
 	public float BubbleSpeedY;
 	public float BubbleSpeedYPotential;
 	public float BubbleSize = 0.15f;
-	
+
 	private int levelIdx = 0; // goes from 0...n - 1
 	private final AGameLevel[] levels;
 
@@ -57,14 +57,14 @@ public class GameData {
 		this.levels = levels;
 		this.levels[0].copyTo(this);
 	}
-	
+
 	public void init(IMyRandom myRandom) {
 		this.CameraYPosition = 0.0f;
 		this.levelIdx = 0;
 		this.levels[0].copyTo(this);
 		myRandom.setGenerator(this.levels[0].getGeneratorStateMachine());
 	}
-	
+
 	public void update(int score, IMyRandom myRandom) {
 		// got to the next level if current one is on its end
 		if (this.levels[this.levelIdx].isEndOfLevel(score) && this.levelIdx + 1 < this.levels.length) {
@@ -77,15 +77,15 @@ public class GameData {
 	public static GameData createDefault(GameManager gameManager) {
 		return new GameData(2.8f, GameDataLevelFactory.createLevels(gameManager));
 	}
-	
+
 	public static GameData createForIntro(GameManager gameManager) {
 		return new GameData(0.4f, GameDataLevelFactory.createDefaultLevel(gameManager));
 	}
-	
+
 	public float getCameraTop() {
 		return CameraYPosition + CameraHalfHeight;
 	}
-	
+
 	public float getCameraBottom() {
 		return CameraYPosition - CameraHalfHeight;
 	}
@@ -93,11 +93,11 @@ public class GameData {
 	public float getCameraYCenter() {
 		return CameraYPosition;
 	}
-	
+
 	public void setProjectionMatrix(Matrix4 matrix) {
 		matrix.setToOrtho(-CameraHalfWidth, CameraHalfWidth, getCameraBottom(), getCameraTop(), 0.0f, 1000.0f);
 	}
-	
+
 	public void setProjectionMatrix(Matrix4 matrix, float yOffset) {
 		matrix.setToOrtho(-CameraHalfWidth, CameraHalfWidth, getCameraBottom() - yOffset, getCameraTop() - yOffset, 0.0f, 1000.0f);
 	}

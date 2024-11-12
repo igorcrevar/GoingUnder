@@ -23,10 +23,10 @@ public class AndroidLauncher extends AndroidApplication {
 
 	private LeaderboardsClient leaderboardsClient;
 
-	private  AchievementsClient achievementClient;
+	private AchievementsClient achievementClient;
 
 	@Override
-	protected void onCreate (Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		initGps();
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
@@ -99,8 +99,8 @@ public class AndroidLauncher extends AndroidApplication {
 			public void showAchievements() {
 				if (achievementClient == null) {
 					AndroidLauncher.this.trySignInGps(() ->
-						achievementClient.getAchievementsIntent()
-								.addOnSuccessListener(intent -> startActivityForResult(intent, RC_ACHIEVEMENT_UI)));
+							achievementClient.getAchievementsIntent()
+									.addOnSuccessListener(intent -> startActivityForResult(intent, RC_ACHIEVEMENT_UI)));
 				} else {
 					achievementClient.getAchievementsIntent()
 							.addOnSuccessListener(intent -> startActivityForResult(intent, RC_ACHIEVEMENT_UI));
@@ -113,8 +113,8 @@ public class AndroidLauncher extends AndroidApplication {
 
 				if (leaderboardsClient == null) {
 					AndroidLauncher.this.trySignInGps(() ->
-						leaderboardsClient.getLeaderboardIntent(ln)
-								.addOnSuccessListener(intent -> startActivityForResult(intent, RC_LEADERBOARD_UI)));
+							leaderboardsClient.getLeaderboardIntent(ln)
+									.addOnSuccessListener(intent -> startActivityForResult(intent, RC_LEADERBOARD_UI)));
 				} else {
 					leaderboardsClient.getLeaderboardIntent(ln)
 							.addOnSuccessListener(intent -> startActivityForResult(intent, RC_LEADERBOARD_UI));

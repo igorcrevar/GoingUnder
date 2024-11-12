@@ -188,7 +188,7 @@ public class ObstacleObject {
 		return partsCount;
 	}
 	
-	public void init(ObstacleTypeEnum obstacleType, GameData gameData, GameManager gameManager) {
+	public void init(ObstacleTypeEnum obstacleType, GameData gameData) {
 		this.obstacleType = obstacleType;
 		initParts(gameData.getCameraBottom() - gameData.ObstacleScaleY, 
 				  gameData.CameraHalfWidth,

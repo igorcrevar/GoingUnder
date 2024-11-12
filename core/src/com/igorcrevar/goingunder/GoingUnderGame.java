@@ -19,6 +19,7 @@ public class GoingUnderGame extends ApplicationAdapter implements ISceneManager,
 	private GameManager gameManager;
 	private IScene currentScene;
 	private final IActivityRequestHandler requestHandler;
+
 	public GoingUnderGame() {
 		this(new DummyActivityRequestHandler());
 	}
@@ -28,23 +29,24 @@ public class GoingUnderGame extends ApplicationAdapter implements ISceneManager,
 	}
 
 	@Override
-	public void create () {
+	public void create() {
 		this.gameManager = new GameManager();
 		this.setScene(SceneConstants.GameLoadingScene);
 		// input processor
-		Gdx.input.setCatchKey(Input.Keys.BACK,true);
+		Gdx.input.setCatchKey(Input.Keys.BACK, true);
 		Gdx.input.setInputProcessor(this);
 	}
 
 	@Override
-	public void render () {
+	public void render() {
 		float deltaTime = Gdx.graphics.getDeltaTime();
-		if (deltaTime > 0.041f) deltaTime = 0.041f; // make sure world does not update dramatically in one step
+		if (deltaTime > 0.041f)
+			deltaTime = 0.041f; // make sure world does not update dramatically in one step
 		currentScene.update(this, deltaTime);
 	}
-	
+
 	@Override
-	public void dispose () {
+	public void dispose() {
 		currentScene.leave(this);
 		if (gameScene != null && gameScene != currentScene) {
 			gameScene.dispose(this);
@@ -80,8 +82,7 @@ public class GoingUnderGame extends ApplicationAdapter implements ISceneManager,
 			case SceneConstants.GameScene:
 				if (gameScene != null) {
 					currentScene = gameScene;
-				}
-				else {
+				} else {
 					gameScene = currentScene = new GameScene(new MyRandom(), requestHandler);
 					currentScene.create(this);
 				}
@@ -89,8 +90,7 @@ public class GoingUnderGame extends ApplicationAdapter implements ISceneManager,
 			case SceneConstants.IntroScene:
 				if (introScene != null) {
 					currentScene = introScene;
-				}
-				else {
+				} else {
 					introScene = currentScene = new IntroScene(requestHandler);
 					currentScene.create(this);
 				}
@@ -107,8 +107,7 @@ public class GoingUnderGame extends ApplicationAdapter implements ISceneManager,
 		// show tutorial for some number of games
 		if (gameManager.getTotalGamesPlayed() > TutorialGamesCount) {
 			setScene(SceneConstants.GameScene);
-		}
-		else {
+		} else {
 			setScene(SceneConstants.TutorialScene);
 		}
 	}
@@ -124,8 +123,7 @@ public class GoingUnderGame extends ApplicationAdapter implements ISceneManager,
 	public boolean keyDown(int keycode) {
 		if (keycode == Input.Keys.Z) {
 			currentScene.processTouchDown(this, 0, Gdx.graphics.getHeight());
-		}
-		else if (keycode == Input.Keys.X) {
+		} else if (keycode == Input.Keys.X) {
 			currentScene.processTouchDown(this, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		}
 		return true;

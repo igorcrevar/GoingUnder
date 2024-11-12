@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.igorcrevar.goingunder.GameData;
 import com.igorcrevar.goingunder.GameManager;
 import com.igorcrevar.goingunder.IActivityRequestHandler;
@@ -22,36 +23,38 @@ public class TutorialScene implements IScene {
 	private GameData gameData;
 	private GameManager gameManager;
 
-	private IActivityRequestHandler activityRequestHandler;
+	private final IActivityRequestHandler activityRequestHandler;
 	private boolean isDisposed;
-	
+
 	private Player player;
 	private IGameObject background;
-	private Sprite button = new Sprite();
-	private Sprite arrow = new Sprite();
-	
+	private final Sprite button = new Sprite();
+	private final Sprite arrow = new Sprite();
+
+	private final ShapeRenderer shapeRenderer = new ShapeRenderer();
+
 	private int state;
 	private float buttonAlpha;
 	private float buttonTimer;
 	private float pauseTimer;
 	private float countingDownTimer;
-	
+
 	public TutorialScene(IActivityRequestHandler activityRequestHandler) {
 		this.activityRequestHandler = activityRequestHandler;
 	}
-	
+
 	@Override
 	public void create(ISceneManager sceneManager) {
 		this.gameManager = sceneManager.getGameManager();
 		this.gameData = GameData.createForIntro(this.gameManager);
 		this.gameData.VelocityY = 0f;
 		this.gameData.CameraDist = 2.8f;
-		
+
 		arrow.setRegion(gameManager.getTextureAtlas("game").findRegion("arrow"));
 		arrow.setSize(0.4f, 0.5f);
 		button.setRegion(gameManager.getTextureAtlas("game").findRegion("dummy"));
 		button.setSize(gameData.CameraHalfWidth, gameData.CameraHalfHeight * 0.5f);
-		
+
 		player = gameManager.getPlayer();
 		background = gameManager.getBackground();
 	}
@@ -59,7 +62,7 @@ public class TutorialScene implements IScene {
 	@Override
 	public void init(ISceneManager sceneManager) {
 		activityRequestHandler.showAds(false);
-		
+
 		player.init(gameData);
 		background.init(gameData);
 		state = 0;
@@ -71,32 +74,31 @@ public class TutorialScene implements IScene {
 	private boolean isLeft() {
 		return (state == 0 || state == 2 || state == 3);
 	}
-	
+
 	@Override
 	public void update(ISceneManager sceneManager, float deltaTime) {
 		if (state == 6) {
 			doFinalCountdown(deltaTime, sceneManager);
-		}		
-		else {
+		} else {
 			// count pause timer if needed (not eq 0f)
-			if (pauseTimer != 0f) { 
+			if (pauseTimer != 0f) {
 				pauseTimer += deltaTime;
 				if (pauseTimer >= 0.5f) {
 					pauseTimer = 0.0f;
 				}
 			}
-			
+
 			doDefault(deltaTime);
 			drawDefault();
 		}
+
+		player.drawLights(shapeRenderer, gameData);
 	}
 
 	@Override
 	public void dispose(ISceneManager sceneManager) {
 		if (!isDisposed) {
-			if (spriteBatch != null) {
-				spriteBatch.dispose();
-			}
+			spriteBatch.dispose();
 			isDisposed = true;
 		}
 	}
@@ -109,11 +111,11 @@ public class TutorialScene implements IScene {
 	@Override
 	public void processTouchDown(ISceneManager sceneManager, int x, int y) {
 		// on last state or when pause is not over taps do not count
-		// ...also skip touch if its colddown time
+		// ...also skip touch if its cool down time
 		if (state == 6 || pauseTimer != 0f || buttonTimer < ButtonTimerPause) {
 			return;
 		}
-		
+
 		boolean okYPos = GameHelper.screenY2WorldY(gameData, y) < -gameData.CameraHalfHeight + button.getHeight();
 		if (isLeft()) {
 			if (okYPos && x < Gdx.graphics.getWidth() / 2) {
@@ -122,9 +124,8 @@ public class TutorialScene implements IScene {
 				pauseTimer = 0.001f; // request pause
 				buttonTimer = 0f;
 				state += 1;
-			}	
-		}
-		else if (okYPos && x > Gdx.graphics.getWidth() / 2) {
+			}
+		} else if (okYPos && x > Gdx.graphics.getWidth() / 2) {
 			player.addVelocity(-gameData.VelocityX);
 			gameManager.playMoveSound();
 			pauseTimer = 0.001f; // request pause
@@ -145,31 +146,31 @@ public class TutorialScene implements IScene {
 		boolean isLeft = isLeft();
 		// update arrow
 		float arrowTimer = buttonTimer / 2f;
-		x = isLeft ? -gameData.CameraHalfWidth / 2.0f - arrow.getWidth() / 2.0f : gameData.CameraHalfWidth / 2.0f - arrow.getWidth() / 2.0f; 
+		x = isLeft ? -gameData.CameraHalfWidth / 2.0f - arrow.getWidth() / 2.0f : gameData.CameraHalfWidth / 2.0f - arrow.getWidth() / 2.0f;
 		y = Mathf.lerpBI(
-			-gameData.CameraHalfHeight / 2f + 1.2f,
-			-gameData.CameraHalfHeight / 2f + 0.4f, 
-			arrowTimer - (float)Math.floor(arrowTimer));
+				-gameData.CameraHalfHeight / 2f + 1.2f,
+				-gameData.CameraHalfHeight / 2f + 0.4f,
+				arrowTimer - (float) Math.floor(arrowTimer));
 		arrow.setPosition(x, y);
 		// update button
 		x = isLeft ? -gameData.CameraHalfWidth : 0f;
 		y = -gameData.CameraHalfHeight;
 		button.setPosition(x, y);
 		buttonAlpha = Mathf.lerpBI(
-			0.6f,
-			0.1f,
-			buttonTimer - (float)Math.floor(buttonTimer));
+				0.6f,
+				0.1f,
+				buttonTimer - (float) Math.floor(buttonTimer));
 		// update player
 		player.update(deltaTime);
-		
+
 		buttonTimer += deltaTime;
 	}
-	
+
 	private void drawDefault() {
 		GameHelper.clearScreen();
-		
+
 		background.draw(spriteBatch);
-		
+
 		gameData.setProjectionMatrix(spriteBatch.getProjectionMatrix());
 		spriteBatch.begin();
 		if (buttonTimer >= ButtonTimerPause) {
@@ -181,13 +182,12 @@ public class TutorialScene implements IScene {
 
 		// draw additional text. Is this necessary?
 		BitmapFontDrawer bfDrawer = gameManager.getBitmapFontDrawer();
-		String txt1 = isLeft() 
-			? "Tap left screen side"
-			: "Tap right screen side";
-		String txt2 = isLeft() 
-			? "to give a rightward impulse"
-			: "to give a leftward impulse";
-		float xpos = bfDrawer.getWidth() * (isLeft() ? 0.25f : 0.75f);
+		String txt1 = isLeft()
+				? "Tap left screen side"
+				: "Tap right screen side";
+		String txt2 = isLeft()
+				? "to give a rightward impulse"
+				: "to give a leftward impulse";
 		bfDrawer.begin()
 				.setScale(1.0f)
 				.setColor(Color.ORANGE)
@@ -195,33 +195,33 @@ public class TutorialScene implements IScene {
 				.draw(txt2, 0f, 100f, BitmapFontDrawer.Flag.Center, BitmapFontDrawer.Flag.Center)
 				.end();
 	}
-	
+
 	private void doFinalCountdown(float deltaTime, ISceneManager sceneManager) {
 		player.update(deltaTime);
-		
+
 		GameHelper.clearScreen();
-		
+
 		// draw background and player 
 		background.draw(spriteBatch);
 		gameData.setProjectionMatrix(spriteBatch.getProjectionMatrix());
 		spriteBatch.begin();
 		player.draw(spriteBatch);
 		spriteBatch.end();
-		
+
 		// draw counter
 		BitmapFontDrawer bfDrawer = gameManager.getBitmapFontDrawer();
-		int no = (int)Math.round(Mathf.lerp(3.0f, 0.0f, countingDownTimer / 3.0f));
+		int no = Math.round(Mathf.lerp(3.0f, 0.0f, countingDownTimer / 3.0f));
 		String txt = no != 0 ? Integer.toString(no) : "Go!";
 		bfDrawer.begin()
 				.setScale(1.0f)
 				.setColor(Color.WHITE)
-				.draw(txt,  0.0f, bfDrawer.getHeight() * 0.3f, BitmapFontDrawer.Flag.Center)
+				.draw(txt, 0.0f, bfDrawer.getHeight() * 0.3f, BitmapFontDrawer.Flag.Center)
 				.end();
-		
+
 		countingDownTimer += deltaTime;
 		// if counter reach limit start game!
 		if (countingDownTimer >= 3.0f) {
 			sceneManager.setScene(SceneConstants.GameScene);
-		}		
+		}
 	}
 }

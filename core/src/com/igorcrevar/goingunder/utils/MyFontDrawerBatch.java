@@ -12,16 +12,16 @@ import com.badlogic.gdx.utils.Disposable;
 public class MyFontDrawerBatch implements Disposable {
 	private static final float Width = 1080f;
 
-	private ShaderProgram sp;
-	private float height;
-	private IMyFontDrawerFont myFont;
-	private ArrayList<MyFontDrawer> fonts = new ArrayList<MyFontDrawer>(4);
-	private Matrix4 projectionMatrix = new Matrix4();
-	
+	private final ShaderProgram sp;
+	private final float height;
+	private final IMyFontDrawerFont myFont;
+	private final ArrayList<MyFontDrawer> fonts = new ArrayList<>(4);
+	private final Matrix4 projectionMatrix = new Matrix4();
+
 	public MyFontDrawerBatch(IMyFontDrawerFont myFont) {
 		this.myFont = myFont;
-		this.height = (float)Math.floor((float)Gdx.graphics.getHeight() / Gdx.graphics.getWidth() * Width);
-		
+		this.height = (float) Math.floor((float) Gdx.graphics.getHeight() / Gdx.graphics.getWidth() * Width);
+
 		String vertexShader = "attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
 				+ "attribute vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
 				+ "uniform mat4 u_projTrans;\n" //
@@ -33,8 +33,8 @@ public class MyFontDrawerBatch implements Disposable {
 				+ "   gl_Position =  u_projTrans * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
 				+ "}\n";
 		String fragmentShader = "#ifdef GL_ES\n"
-                + "precision mediump float;\n" 
-                + "#endif\n"
+				+ "precision mediump float;\n"
+				+ "#endif\n"
 				+ "varying vec2 v_texCoords;\n" //
 				+ "uniform sampler2D u_texture;\n" //
 				+ "void main()\n"//
@@ -42,15 +42,15 @@ public class MyFontDrawerBatch implements Disposable {
 				+ "  gl_FragColor = texture2D(u_texture, v_texCoords);\n" //
 				+ "}";
 		// make an actual shader from our strings
-		sp = new ShaderProgram(vertexShader, fragmentShader);		
+		sp = new ShaderProgram(vertexShader, fragmentShader);
 		// check there's no shader compile errors
-		if (sp.isCompiled() == false)
+		if (!sp.isCompiled())
 			throw new IllegalStateException(sp.getLog());
 	}
-	
+
 	public MyFontDrawer addNew(
 			String txt,
-			TextureRegion textureRegion, 
+			TextureRegion textureRegion,
 			float width, float height,
 			float letterPadding, float cellPadding) {
 		MyFontDrawer drawer = new MyFontDrawer(myFont, txt, textureRegion,
@@ -69,7 +69,7 @@ public class MyFontDrawerBatch implements Disposable {
 		for (MyFontDrawer fd : fonts) {
 			projectionMatrix.setToOrtho2D(0, 0, Width, height);
 			sp.setUniformMatrix("u_projTrans", projectionMatrix.mul(fd.getViewModelMatrix()));
-			fd.draw(sp);	
+			fd.draw(sp);
 		}
 	}
 
@@ -85,5 +85,7 @@ public class MyFontDrawerBatch implements Disposable {
 		return height;
 	}
 
-	public float getWidth() { return Width; }
+	public float getWidth() {
+		return Width;
+	}
 }

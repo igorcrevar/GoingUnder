@@ -14,10 +14,10 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 public class StaticBackground implements IGameObject {
 	private static final float RepeatFactor = 16f;
 	private static final float SpeedFactor = 0.3f;
-	
+
 	private final Mesh mesh;
 	private final Matrix4 viewModelMatrix;
-	
+
 	private final ShaderProgram sp;
 
 	private GameData gameData;
@@ -26,14 +26,14 @@ public class StaticBackground implements IGameObject {
 
 	public StaticBackground(GameManager gameManager) {
 		sp = gameManager.getShaderProgram("background");
-		
+
 		mesh = new Mesh(true, 4, 6, new VertexAttribute(Usage.Position, 2, ShaderProgram.POSITION_ATTRIBUTE));
 		mesh.setIndices(new short[]{0, 1, 2, 2, 3, 0});
 		mesh.setVertices(new float[]{
-			-0.5f,  0.5f,
-			 0.5f,  0.5f,
-			 0.5f, -0.5f,
-			-0.5f, -0.5f, 
+				-0.5f, 0.5f,
+				0.5f, 0.5f,
+				0.5f, -0.5f,
+				-0.5f, -0.5f,
 		});
 
 		viewModelMatrix = new Matrix4().setToOrtho(-0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 1000.0f);
@@ -41,7 +41,7 @@ public class StaticBackground implements IGameObject {
 
 	@Override
 	public void init(Object odata) {
-		gameData = (GameData)odata;
+		gameData = (GameData) odata;
 		offset = 0f;
 	}
 

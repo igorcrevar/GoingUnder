@@ -15,22 +15,22 @@ import com.igorcrevar.goingunder.utils.Mathf;
 
 public class Player implements IGameObject {
 	public final float InitialAngle = 90.0f;
-	
+
 	private final Sprite gameObject;
-	
+
 	private float velocityX;
 	private GameData gameData;
 	private float rotationAngle;
-	
+
 	private boolean dieAnimationStarted;
 	private float diePositionX;
 	private float diePositionY;
-	
+
 	private final TextureRegion[] liveTextureRegions;
 	private final TextureRegion[] dieTextureRegions;
 	private float animationTimer;
 	private int currentFrame;
-	
+
 	public Player(TextureRegion[] liveTextureRegions, TextureRegion[] dieTextureRegions) {
 		this.gameObject = new Sprite();
 		this.liveTextureRegions = liveTextureRegions;
@@ -41,15 +41,14 @@ public class Player implements IGameObject {
 		velocityX += inc;
 		if (velocityX > gameData.MaxVelocityX) {
 			velocityX = gameData.MaxVelocityX;
-		}
-		else if (velocityX < -gameData.MaxVelocityX) {
+		} else if (velocityX < -gameData.MaxVelocityX) {
 			velocityX = -gameData.MaxVelocityX;
 		}
 	}
-	
+
 	@Override
 	public void init(Object data) {
-		this.gameData = (GameData)data;
+		this.gameData = (GameData) data;
 		this.rotationAngle = InitialAngle;
 		this.velocityX = 0.0f;
 		gameObject.setSize(gameData.PlayerSizeX, gameData.PlayerSizeY);
@@ -81,31 +80,30 @@ public class Player implements IGameObject {
 			rotationAngle += gameData.RotationSpeed * deltaTime;
 			rotationAngle = Math.min(rotationAngle, InitialAngle);
 		}
-		
+
 		// set rotation
 		this.gameObject.setRotation(getAngle());
 
 		// calculate new position
 		float newX = gameObject.getX() + velocityX * deltaTime;
 		float newY = gameObject.getY() + gameData.VelocityY * deltaTime;
-						
+
 		// bouncing on left/right boundaries
 		this.gameObject.setPosition(newX, newY);
-		if (velocityX > 0.0f && newX + gameData.PlayerSizeX  >= gameData.CameraHalfWidth || 
-			velocityX < 0.0f && newX <= -gameData.CameraHalfWidth) {
+		if (velocityX > 0.0f && newX + gameData.PlayerSizeX >= gameData.CameraHalfWidth ||
+				velocityX < 0.0f && newX <= -gameData.CameraHalfWidth) {
 			velocityX = Math.abs(velocityX * gameData.BoundariesBouncingFactor);
 			if (newX > 0.0f) {
 				velocityX = -velocityX;
 				newX = gameData.CameraHalfWidth - gameData.PlayerSizeX;
-			}
-			else {
+			} else {
 				newX = -gameData.CameraHalfWidth;
 			}
 		}
-		
+
 		// update position and rotation
 		this.gameObject.setPosition(newX, newY);
-		
+
 		// update X velocity (with friction)
 		if (velocityX > 0.0f) {
 			velocityX -= gameData.Friction * deltaTime;
@@ -118,11 +116,11 @@ public class Player implements IGameObject {
 				velocityX = 0.0f;
 			}
 		}
-		
+
 		// update animation
 		updateAnimation(liveTextureRegions, deltaTime);
 	}
-	
+
 	@Override
 	public void draw(SpriteBatch spriteBatch) {
 		gameObject.draw(spriteBatch);
@@ -135,9 +133,9 @@ public class Player implements IGameObject {
 
 	@Override
 	public void setIsEnabled(boolean value) {
-		
+
 	}
-	
+
 	public void updateDie(float additionalTimer, float deltaTime) {
 		if (!dieAnimationStarted) {
 			dieAnimationStarted = true;
@@ -147,7 +145,7 @@ public class Player implements IGameObject {
 			diePositionX = this.gameObject.getX();
 			diePositionY = this.gameObject.getY();
 		}
-		
+
 		float playerDiedAnimTime1 = 1.0f;
 		if (additionalTimer <= playerDiedAnimTime1) {
 			float realTime = additionalTimer / playerDiedAnimTime1;
@@ -162,23 +160,23 @@ public class Player implements IGameObject {
 			gameObject.setScale(scale);
 			gameObject.rotate(2.0f * 360.0f * deltaTime);
 		}
-		
+
 		// animation
 		updateAnimation(dieTextureRegions, deltaTime);
 	}
-	
+
 	public Rectangle getBoundingRectangle() {
 		return gameObject.getBoundingRectangle();
 	}
-	
+
 	public float getAngle() {
 		return rotationAngle > InitialAngle ? rotationAngle - InitialAngle : rotationAngle + (360.0f - InitialAngle);
 	}
-	
+
 	public float getX() {
 		return gameObject.getX() + gameData.PlayerSizeX / 2.0f;
 	}
-	
+
 	public float getY() {
 		return gameObject.getY() + gameData.PlayerSizeY / 2.0f;
 	}
@@ -186,58 +184,56 @@ public class Player implements IGameObject {
 	public float getVelocityX() {
 		return this.velocityX;
 	}
-	
+
 	private void updateAnimation(TextureRegion[] textures, float deltaTime) {
 		// [0 - 0.99]
-		float tmp = animationTimer - (int)animationTimer + 0.0001f;
+		float tmp = animationTimer - (int) animationTimer;
 		// calculate current fame
-		int desiredFrame = (int)Math.ceil(tmp * textures.length) - 1;
-		if (desiredFrame < 0) desiredFrame = 0;
-		else if (desiredFrame >= textures.length) desiredFrame = textures.length - 1;
+		int desiredFrame = (int) Math.floor(tmp * textures.length);
 		// only swap textures if needed
 		if (desiredFrame != currentFrame) {
 			currentFrame = desiredFrame;
 			gameObject.setRegion(textures[currentFrame]);
 		}
-		
+
 		animationTimer += deltaTime;
 	}
-	
-	private Vector2[] points = null;
-	private Color tmpColor2 = new Color(1f, 1f, 1f, 0.2f); 
-	private Color tmpColor1 = new Color(1f, 1f, 1f, 0.0f);
+
+	private final Vector2[] points = {
+			new Vector2(), new Vector2(), new Vector2(), new Vector2(), new Vector2(), new Vector2(),
+	};
+	private final Color lightStart = new Color(1f, 1f, 1f, 0.2f);
+
+	private final Color lightEnd = new Color(1f, 1f, 1f, 0.0f);
+
 	public void drawLights(ShapeRenderer shapeRenderer, GameData gameData) {
 		if (dieAnimationStarted) return;
-		if (points == null) {
-			points = new Vector2[6];
-			for (int i = 0; i < points.length; ++i) {
-				points[i] = new Vector2();
-			}
-		}
+		gameData.setProjectionMatrix(shapeRenderer.getProjectionMatrix(), gameData.CameraYPosition);
+
 		// draw lights
 		float inX = gameObject.getX() + gameData.PlayerSizeX / 2.0f;
 		float inY = gameObject.getY() + gameData.PlayerSizeY / 2.0f - gameData.CameraYPosition;
-		float angle = (float)(getAngle() / 180.f * Math.PI);
+		float angle = (float) (getAngle() / 180.f * Math.PI);
 		float maxY = -2.2f;
-		points[2].set(- 0.15f, - 0.4f);
-		points[1].set(+ 0.15f, - 0.4f);
-		points[0].set(- 0.9f, maxY);		
-		points[5].set(+ 0.15f, - 0.4f);
-		points[4].set(+ 0.9f, maxY);
-		points[3].set(- 0.9f, maxY);
-		for (int i = 0; i < points.length; ++i) {
-			points[i].rotateRad(angle);
-			points[i].add(inX, inY);
+		points[2].set(-0.15f, -0.4f);
+		points[1].set(+0.15f, -0.4f);
+		points[0].set(-0.9f, maxY);
+		points[5].set(+0.15f, -0.4f);
+		points[4].set(+0.9f, maxY);
+		points[3].set(-0.9f, maxY);
+		for (Vector2 point : points) {
+			point.rotateRad(angle);
+			point.add(inX, inY);
 		}
-		
+
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		shapeRenderer.begin(ShapeType.Filled);
-		for (int i = 0; i < points.length / 3; ++i) {
-			Vector2 p1 = points[i * 3];
-			Vector2 p2 = points[i * 3 + 1];
-			Vector2 p3 = points[i * 3 + 2];
-			Color cl = i == 0 ? tmpColor2 : tmpColor1;
-			shapeRenderer.triangle(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, tmpColor1, cl, tmpColor2);
+		for (int i = 0; i < points.length; i += 3) {
+			Vector2 p1 = points[i];
+			Vector2 p2 = points[i + 1];
+			Vector2 p3 = points[i + 2];
+			Color cl = i == 0 ? lightStart : lightEnd;
+			shapeRenderer.triangle(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, lightEnd, cl, lightStart);
 		}
 		shapeRenderer.end();
 	}

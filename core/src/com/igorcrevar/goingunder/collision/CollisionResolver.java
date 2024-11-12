@@ -11,14 +11,14 @@ import com.igorcrevar.goingunder.objects.Player;
 import com.igorcrevar.goingunder.objects.obstacles.ObstacleObject;
 
 public class CollisionResolver {
-	private BoundingBox[] obstacleBoundingBoxes = new BoundingBox[20];
+	private final BoundingBox[] obstacleBoundingBoxes = new BoundingBox[20];
 	private int currentNumberOfObstacleBBs = 0;
 	
-	private BoundingBox obstacleBoundingBox = new BoundingBox();
-	//private BoundingBox playerBoundingBox = new BoundingBox(0.0282f, -0.161f, 0.752f, 0.252f, 0.0f); 
-	private BoundingBox playerBoundingBox = new BoundingBox(0.0f, -0.25f, 0.92f, 0.25f, 0.0f);
-	private BoundingSphere playerBoundingSphere = new BoundingSphere(0.0f, 0.08f, 0.3f);
-	private BoundingSphere playerBoundingSphere2 = new BoundingSphere(0.0f, -0.3f, 0.2f);
+	private final BoundingBox obstacleBoundingBox = new BoundingBox();
+	//private final BoundingBox playerBoundingBox = new BoundingBox(0.0282f, -0.161f, 0.752f, 0.252f, 0.0f);
+	private final BoundingBox playerBoundingBox = new BoundingBox(0.0f, -0.25f, 0.92f, 0.25f, 0.0f);
+	private final BoundingCircle playerBoundingSphere = new BoundingCircle(0.0f, 0.08f, 0.3f);
+	private final BoundingCircle playerBoundingSphere2 = new BoundingCircle(0.0f, -0.3f, 0.2f);
 	
 	public CollisionResolver() {
 		for (int i = 0; i < obstacleBoundingBoxes.length; ++i) {
@@ -36,7 +36,7 @@ public class CollisionResolver {
 		}		
 	}
 
-	private void draw(ShapeRenderer shapeRenderer, BoundingSphere aabb, float cameraY) {
+	private void draw(ShapeRenderer shapeRenderer, BoundingCircle aabb, float cameraY) {
 		shapeRenderer.setColor(1, 1, 1, 1);
 		shapeRenderer.circle(aabb.getCenter().x, aabb.getCenter().y - cameraY, aabb.getRadius(), 60);
 	}

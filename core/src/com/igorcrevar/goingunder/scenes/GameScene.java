@@ -33,30 +33,30 @@ public class GameScene implements IScene {
 	private GameData gameData;
 	private IGameObject background;
 	private Fishes fishes;
-	
+
 	private ParticleEffect particles;
-		
+
 	private final SpriteBatch spriteBatch = new SpriteBatch();
 	private final ShapeRenderer shapeRenderer = new ShapeRenderer();
-	
+
 	private final IMyRandom myRandom;
 	private IObstaclePool obstaclePool;
-	
+
 	private float additionalTimer;
 	private GameManager gameManager;
 
 	private final int halfScreen;
-	
+
 	private final CollisionResolver collisionResolver = new CollisionResolver();
-	
+
 	// my font
 	private final MyFontDrawerBatch myFontDrawerBatch = new MyFontDrawerBatch(new MyFontDrawerDefaultFont());
 	private MyFontDrawer gameOverDrawer;
 	private final IActivityRequestHandler activityRequestHandler;
-	
+
 	// buttons
 	private EndGameButtons endGameButtons;
-	
+
 	// previous position of camera when obstacle is generated
 	private float prevCameraYWhenObstacleIsGenerated;
 	//
@@ -68,46 +68,46 @@ public class GameScene implements IScene {
 		this.activityRequestHandler = activityRequestHandler;
 		this.halfScreen = Gdx.graphics.getWidth() / 2;
 	}
-	
+
 	@Override
 	public void create(ISceneManager sceneManager) {
 		this.gameManager = sceneManager.getGameManager();
 		this.gameData = GameData.createDefault(this.gameManager);
 		this.obstaclePool = new ObstaclePool(this.gameData.MaxOnScreenAtOnce);
-		
+
 		player = gameManager.getPlayer();
 		background = gameManager.getBackground();
 		fishes = new Fishes(gameManager);
 		particles = new ParticleEffect(gameManager, player, gameData);
-		
+
 		// my font
 		gameOverDrawer = myFontDrawerBatch.addNew("Game Over",
 				gameManager.getTextureAtlas("game").findRegion("titlebubble"),
 				20, 40, 10, 0.00001f);
-		
+
 		// buttons
 		endGameButtons = new EndGameButtons(sceneManager, activityRequestHandler, gameManager);
 		activeGameButtons = new ActiveGameButtons(gameManager);
 	}
-	
+
 	@Override
 	public void init(ISceneManager sceneManager) {
 		activityRequestHandler.showAds(false);
-		
+
 		obstaclePool.init();
 		gameData.init(myRandom);
 		player.init(gameData);
 		background.init(gameData);
 		particles.init(gameData);
 		fishes.init(gameData);
-		
+
 		additionalTimer = 0.0f;
 		resumingCounter = 0.0f;
 		myRandom.reset();
 		gameManager.resetGame();
 		gameManager.setGameStatus(GameManager.Status.Active);
 		prevCameraYWhenObstacleIsGenerated = gameData.CameraYPosition + gameData.ObstacleGeneratorDistance;
-		
+
 		activeGameButtons.init();
 	}
 
@@ -147,7 +147,7 @@ public class GameScene implements IScene {
 
 				break;
 		}
-		
+
 		// draw
 		draw();
 	}
@@ -155,13 +155,13 @@ public class GameScene implements IScene {
 	@Override
 	public void leave(ISceneManager sceneManager) {
 	}
-	
+
 	private void update(float deltaTime) {
 		background.update(deltaTime);
 		player.update(deltaTime);
 		particles.update(deltaTime);
 		fishes.update(deltaTime);
-		
+
 		ArrayList<ObstacleObject> obstacles = obstaclePool.getAllVisibles();
 		for (int i = obstacles.size() - 1; i >= 0; --i) {
 			ObstacleObject oo = obstacles.get(i);
@@ -173,42 +173,42 @@ public class GameScene implements IScene {
 				// update level if needed
 				gameData.update(gameManager.getCurrentScore(), myRandom);
 			}
-			
+
 			// obstacle is not on the screen anymore, mark it as free to use
 			if (bottom > gameData.getCameraTop()) {
 				// remove from visible obstacles pool
 				obstaclePool.removeFromVisibles(oo);
 			}
 		}
-		
+
 		// update camera pos also
 		gameData.CameraYPosition += deltaTime * gameData.VelocityY;
 	}
-	
+
 	private void draw() {
 		// draw background
 		background.draw(spriteBatch);
-		
+
 		gameData.setProjectionMatrix(spriteBatch.getProjectionMatrix());
 		spriteBatch.begin();
 
 		// draw fishes
 		fishes.draw(spriteBatch);
-		
+
 		// draw particles
 		particles.draw(spriteBatch);
-		
+
 		// draw obstacles
 		ArrayList<ObstacleObject> obstacles = obstaclePool.getAllVisibles();
 		for (int i = obstacles.size() - 1; i >= 0; --i) {
 			obstacles.get(i).draw(spriteBatch);
 		}
-		
+
 		// draw player
 		player.draw(spriteBatch);
 
 		spriteBatch.end();
-		
+
 		drawUI();
 	}
 
@@ -249,7 +249,7 @@ public class GameScene implements IScene {
 					.draw(best, 150f, gameOverYPos - 350f, BitmapFontDrawer.Flag.AlignTopOrRight)
 					.draw(timesPlayed, 150f, gameOverYPos - 450f, BitmapFontDrawer.Flag.AlignTopOrRight)
 					.draw(fishPunchCount, 150f, gameOverYPos - 550f, BitmapFontDrawer.Flag.AlignTopOrRight)
-					.draw(score,  0.0f, bfDrawer.getHeight(), BitmapFontDrawer.Flag.Center, BitmapFontDrawer.Flag.Middle);					
+					.draw(score, 0.0f, bfDrawer.getHeight(), BitmapFontDrawer.Flag.Center, BitmapFontDrawer.Flag.Middle);
 			if (gameData.DrawFPS) {
 				bfDrawer.draw("fps:" + Gdx.graphics.getFramesPerSecond(), 26f, 65f);
 			}
@@ -260,24 +260,23 @@ public class GameScene implements IScene {
 			if (additionalTimer >= gameData.getAdsPause(gameManager.getCurrentScore())) {
 				endGameButtons.draw(spriteBatch);
 			}
-		}
-		else {
+		} else {
 			// draw active buttons
 			activeGameButtons.draw(spriteBatch);
 
 			bfDrawer.begin()
 					.setScale(1.0f)
 					.setColor(Color.WHITE)
-					.draw(score,  0.0f, bfDrawer.getHeight(), BitmapFontDrawer.Flag.Center, BitmapFontDrawer.Flag.Middle);
+					.draw(score, 0.0f, bfDrawer.getHeight(), BitmapFontDrawer.Flag.Center, BitmapFontDrawer.Flag.Middle);
 
 			if (status == GameManager.Status.Resuming) {
-				int cnt = 3 - (int)resumingCounter;
+				int cnt = 3 - (int) resumingCounter;
 				String txt = cnt <= 0 ? "Go!" : String.valueOf(cnt);
-				float tmp = resumingCounter - (int)resumingCounter;
+				float tmp = resumingCounter - (int) resumingCounter;
 				float scale = Mathf.lerp(2.5f, 1.0f, tmp);
 
 				bfDrawer.setScale(scale)
-						.draw(txt,  0.0f, 0f, BitmapFontDrawer.Flag.Center, BitmapFontDrawer.Flag.Center);
+						.draw(txt, 0.0f, 0f, BitmapFontDrawer.Flag.Center, BitmapFontDrawer.Flag.Center);
 			}
 
 			if (gameData.DrawFPS) {
@@ -286,7 +285,6 @@ public class GameScene implements IScene {
 
 			bfDrawer.end();
 
-			gameData.setProjectionMatrix(shapeRenderer.getProjectionMatrix(), gameData.CameraYPosition);
 			// draw lights
 			player.drawLights(shapeRenderer, gameData);
 			// draw collision
@@ -298,10 +296,10 @@ public class GameScene implements IScene {
 
 	private void obstacleGeneration() {
 		// generate obstacles
-		if (-gameData.CameraYPosition + prevCameraYWhenObstacleIsGenerated >= gameData.ObstacleGeneratorDistance) {		
+		if (-gameData.CameraYPosition + prevCameraYWhenObstacleIsGenerated >= gameData.ObstacleGeneratorDistance) {
 			obstaclePool.getOne(myRandom.getNext(), gameData, gameManager);
 			prevCameraYWhenObstacleIsGenerated = gameData.CameraYPosition;
-		}	
+		}
 	}
 
 	@Override
@@ -313,8 +311,7 @@ public class GameScene implements IScene {
 					gameManager.playMoveSound();
 					if (x > halfScreen) {
 						player.addVelocity(-gameData.VelocityX);
-					}
-					else {
+					} else {
 						player.addVelocity(gameData.VelocityX);
 					}
 

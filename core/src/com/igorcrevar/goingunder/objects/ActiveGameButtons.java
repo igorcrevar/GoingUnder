@@ -31,11 +31,10 @@ public class ActiveGameButtons extends GameButtons {
 
 			@Override
 			public boolean check(float x, float y) {
-				final float scWidth = ActiveGameButtons.this.width;
-				final float scHeight = ActiveGameButtons.this.height;
 				if (!isEnabled || !GameHelper.tapPointInsideRectangle(
-					x, y, 
-					0, scHeight, sprite.getWidth() + ExtraSize, sprite.getHeight() + ExtraSize)) {
+						x, y, 0, ActiveGameButtons.this.height,
+						sprite.getWidth() + ExtraSize,
+						sprite.getHeight() + ExtraSize)) {
 					return false;
 				}
 

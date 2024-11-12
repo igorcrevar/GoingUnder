@@ -8,19 +8,19 @@ public class GameHelper {
 	public static float screenX2WorldX(GameData gameData, float x) {
 		return -gameData.CameraHalfWidth + 2.0f * gameData.CameraHalfWidth * x / Gdx.graphics.getWidth();
 	}
-	
+
 	public static float screenY2WorldY(GameData gameData, float y) {
 		return gameData.CameraHalfHeight - 2.0f * gameData.CameraHalfHeight * y / Gdx.graphics.getHeight();
 	}
-	
+
 	public static float screenX2OtherX(float x, float worldX) {
 		return worldX * x / Gdx.graphics.getWidth();
 	}
-	
+
 	public static float screenY2OtherY(float y, float worldY) {
 		return worldY * (Gdx.graphics.getHeight() - y) / Gdx.graphics.getHeight();
 	}
-	
+
 	public static void clearScreen() {
 		Gdx.graphics.getGL20().glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		Gdx.graphics.getGL20().glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);

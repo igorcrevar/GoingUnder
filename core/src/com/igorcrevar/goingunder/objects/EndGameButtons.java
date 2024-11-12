@@ -10,10 +10,10 @@ public class EndGameButtons extends GameButtons {
 	private static final float ButtonsYPos = 500;
 
 	private final GameManager gameManager;
-	
+
 	public EndGameButtons(final ISceneManager sceneManager,
-			final IActivityRequestHandler activityRequestHandler,
-			final GameManager gameManager) {
+						  final IActivityRequestHandler activityRequestHandler,
+						  final GameManager gameManager) {
 		super(3, 1080.0f);
 		this.gameManager = gameManager;
 

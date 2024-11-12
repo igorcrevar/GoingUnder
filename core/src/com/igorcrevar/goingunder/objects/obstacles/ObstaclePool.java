@@ -40,9 +40,7 @@ public class ObstaclePool implements IObstaclePool {
 		for (int i = 0; i < obstacles.length; ++i) {
 			ObstacleObject o = obstacles[i];
 			if (!o.isEnabled()) {
-				// must init new
-				o.init(type, gameData, gameManager);
-				// add to visibles
+				o.init(type, gameData);
 				visible.add(o);
 				return o;
 			}

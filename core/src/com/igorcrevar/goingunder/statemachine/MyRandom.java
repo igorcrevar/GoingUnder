@@ -8,10 +8,9 @@ public class MyRandom implements IMyRandom {
 	private IGeneratorStateMachine generator;
 	private ObstacleTypeEnum current;
 	private boolean isFirstRetrieved;
-	private Random random;
-	
+	private final Random random = new Random();
+
 	public MyRandom() {
-		this.random = new Random();
 	}
 
 	@Override
@@ -19,7 +18,7 @@ public class MyRandom implements IMyRandom {
 		if (generator == null) {
 			throw new NullPointerException();
 		}
-		
+
 		ObstacleTypeEnum[] choices;
 		if (!isFirstRetrieved) {
 			choices = generator.getFirst();
@@ -27,7 +26,7 @@ public class MyRandom implements IMyRandom {
 		} else {
 			choices = generator.getPossibilitiesFor(current);
 		}
-		
+
 		int pos = random.nextInt(choices.length);
 		current = choices[pos];
 		return current;

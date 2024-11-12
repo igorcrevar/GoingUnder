@@ -9,12 +9,12 @@ public abstract class AGameLevel {
 
 	// we use public fields instead to just make population of data for every level inside of abstract copyTo method
 	// because I need to change efficiently level data while test mechanic
-	public float boundariesBouncingFactor;	
+	public float boundariesBouncingFactor;
 	public float friction;
 	public float velocityX;
 	public float velocityY;
 	public float obstacleGeneratorDistance;
-	
+
 	public float emptySpaceSizeInTheMiddle;
 	public float emptySpaceSizeOnTheEnd;
 	public int endOnScore;
@@ -22,7 +22,7 @@ public abstract class AGameLevel {
 	public float fishRandomProbability = DefaultFishRandomProbability;
 
 	private IGeneratorStateMachine generatorStateMachine;
-	
+
 	public abstract AtlasRegion[] getTextures();
 
 	public abstract float getEndPartSize();
@@ -39,7 +39,7 @@ public abstract class AGameLevel {
 		data.EmptySpaceSizeInTheMiddle = emptySpaceSizeInTheMiddle;
 		data.EmptySpaceSizeOnTheEnd = emptySpaceSizeOnTheEnd;
 		data.ObstacleGeneratorDistance = obstacleGeneratorDistance;
-		
+
 		data.BoundariesBouncingFactor = boundariesBouncingFactor;
 		data.Friction = friction;
 		data.VelocityX = velocityX;
@@ -47,15 +47,15 @@ public abstract class AGameLevel {
 
 		data.FishRandomProbability = fishRandomProbability;
 	}
-	
+
 	public IGeneratorStateMachine getGeneratorStateMachine() {
 		if (generatorStateMachine == null) {
 			generatorStateMachine = createGeneratorMachine();
 		}
-		
+
 		return generatorStateMachine;
 	}
-	
+
 	public boolean isEndOfLevel(int score) {
 		return score >= endOnScore && endOnScore > 0;
 	}
